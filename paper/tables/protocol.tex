@@ -6,7 +6,7 @@
 \setlength{\tabcolsep}{3.6pt}
 \begin{tabular}{@{}lrrrrrrrr@{}}
 \toprule
- & \multicolumn{2}{c}{Mesh as extracted} & \multicolumn{2}{c}{+ SfM alignment} & \multicolumn{2}{c}{+ Taubin smoothing} & \multicolumn{2}{c}{ICP registration} \\
+ & \multicolumn{2}{c}{Mesh as extracted} & \multicolumn{2}{c}{+ tie-point alignment} & \multicolumn{2}{c}{+ Taubin smoothing} & \multicolumn{2}{c}{ICP registration} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
 Method & Mean (m) & F@1 m & Mean (m) & F@1 m & Mean (m) & F@1 m & Mean (m) & F@1 m \\
 \midrule
@@ -27,5 +27,5 @@ Asteroid-GS$^{\dagger}$ & 2.43 & 0.242 & 1.29 & 0.529 & 1.29 & 0.530 & 1.27 & 0.
 \textbf{PCGS (this work)} & \textbf{0.62} & \textbf{0.797} & \textbf{0.62} & \textbf{0.798} & \textbf{0.62} & \textbf{0.798} & \textbf{0.61} & \textbf{0.803} \\
 \bottomrule
 \end{tabular}
-\tablefoot{Mesh as extracted: each method's own extraction, registered with the shared scene transform (for PCGS this already contains its offset to the SfM tie points). SfM alignment: translation and normal offset fitted to the tie points, no reference used. ICP registration: the SfM-aligned mesh with a similarity transform (scale, rotation, translation) fitted to the reference by ICP instead of the shared scene transform, which removes any global misregistration of that mesh. $^{\dagger}$Asteroid-GS with the scene extent of its public repository (camera ring); the other rows use the object extent, as all methods do. Bold: best; underlined: second best.}
+\tablefoot{Mesh as extracted: each method's own extraction, registered with the shared scene transform (for PCGS this already contains its offset to the SfM tie points). Tie-point alignment: translation and normal offset fitted to the tie points, no reference used. ICP registration: the mesh after tie-point alignment with a similarity transform (scale, rotation, translation) fitted to the reference by ICP instead of the shared scene transform, which removes any global misregistration of that mesh. $^{\dagger}$Asteroid-GS with the scene extent that its released code derives from the camera positions; the other rows use the object extent. Bold: best; underlined: second best.}
 \end{table*}

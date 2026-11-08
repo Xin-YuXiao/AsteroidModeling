@@ -14,7 +14,7 @@ GOF & 38.0 & 0.6 & 38.0 & 0.6 & 0.973 & 0.002 & 0.109 & 0.011 \\
 PGSR & \underline{39.2} & 0.8 & \underline{39.3} & 0.8 & \underline{0.982} & 0.001 & \textbf{0.096} & 0.008 \\
 Asteroid-GS & 16.7 & 0.8 & 29.6 & 0.9 & 0.926 & 0.010 & 0.144 & 0.009 \\
 Asteroid-GS$^{\dagger}$ & 17.0 & 0.9 & 29.5 & 0.5 & 0.943 & 0.004 & 0.138 & 0.011 \\
-Mip-Splatting$^{\ddagger}$ & \multicolumn{2}{c}{\textbf{42.5}} & \multicolumn{2}{c}{\textbf{42.6}} & \multicolumn{2}{c}{\textbf{0.985}} & \multicolumn{2}{c}{0.100} \\
+Mip-Splatting$^{\S}$ & \multicolumn{2}{c}{\textbf{42.5}} & \multicolumn{2}{c}{\textbf{42.6}} & \multicolumn{2}{c}{\textbf{0.985}} & \multicolumn{2}{c}{0.100} \\
 \textbf{PCGS (this work)} & 36.4 & 0.6 & 36.5 & 0.5 & 0.980 & 0.001 & \underline{0.098} & 0.008 \\
 \addlinespace[3pt]
 \multicolumn{9}{@{}l}{\textit{Ryugu (ONC-T, phase 19\textdegree{})}} \\
@@ -26,5 +26,5 @@ Asteroid-GS$^{\dagger}$ & 13.5 & 0.6 & 22.7 & 0.0 & 0.868 & 0.004 & 0.282 & 0.00
 \textbf{PCGS (this work)} & 31.0 & 0.1 & 31.3 & 0.1 & \textbf{0.952} & 0.001 & \underline{0.225} & 0.002 \\
 \bottomrule
 \end{tabular}
-\tablefoot{PSNR raw: the rendered images as written by each method. The other columns after one gain and offset per image, fitted over the body, for every method; methods with per-image appearance codes (Asteroid-GS, GOF) have none for a test image and are rendered at a canonical exposure. $^{\dagger}$Asteroid-GS with the scene extent of its public repository (camera ring); the other rows use the object extent, as all methods do. $^{\ddagger}$First split only. Bold: best; underlined: second best. Higher is better except for LPIPS.}
+\tablefoot{PSNR raw: without the per-image gain and offset. The other columns after one gain and offset per image, fitted over the body, for every method; methods with per-image appearance codes (Asteroid-GS, GOF) have none for a test image and are rendered at a canonical exposure. $^{\dagger}$Asteroid-GS with the scene extent that its released code derives from the camera positions; the other rows use the object extent. $^{\S}$First split only. Bold: best; underlined: second best. Higher is better except for LPIPS.}
 \end{table*}

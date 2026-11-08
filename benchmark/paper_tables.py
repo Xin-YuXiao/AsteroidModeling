@@ -245,6 +245,13 @@ def to_tex_aa3(t):
     s = s.replace("+ Taubin-20 (Table 1)", r"+ Taubin-20 (Table~\ref{tab:main})")
     s = s.replace(r" $\downarrow$", "").replace(r" $\uparrow$", "").replace("held-out", "test")
     s = s.replace(r"\multicolumn{1}{c}{Rule}", "Switch").replace("& Rule &", "& Switch &")
+    s = s.replace(tex(DAGGER), tex(DAG3))
+    if t["key"] in ("shape_full", "images_full"):     # the double dagger marks PCGS without the band in Fig. numbers
+        s = s.replace(r"$^{\ddagger}$", r"$^{\S}$")
+    if t["key"] == "protocol":
+        s = s.replace("+ SfM alignment", "+ tie-point alignment").replace("SfM alignment: translation", "Tie-point alignment: translation")
+        s = s.replace("the SfM-aligned mesh", "the mesh after tie-point alignment")
+    s = s.replace("PSNR raw: the renders as each method writes them.", "PSNR raw: without the per-image gain and offset.")
     s = s.replace("the renders as each method writes them", "the rendered images as written by each method")
     s = s.replace("render it at a canonical exposure", "are rendered at a canonical exposure")
     return s
@@ -291,14 +298,14 @@ def tables_v3():
                      ab("No multi-view NCC", b, PCGS3 + "-nomv"),
                      ab("No pixel correction", b, PCGS3 + "-nopix")]
     T.append(dict(key="ablation", title="Leave-one-out ablation.", lead="First split; one component removed or replaced at a time.",
-                  sd=False, size="footnotesize", sep=3.0, wide=False, ranks=False, drop_empty=True,
-                  cols=[col("mean"), col("rmse"), col("f1"), col("normal")],
+                  sd=False, size="footnotesize", sep=4.0, wide=True, ranks=False, drop_empty=True,
+                  cols=[col("mean"), col("rmse"), col("f1"), col("normal"), col("psnr")],
                   groups=[("Itokawa, 10°", abl("itokawa")), ("Ryugu, 19°", abl("ryugu")), ("Ryugu, 40°", abl("ryugu_b2")),
                           ("Bennu, 26–60°", abl("bennu"))],
                   notes=["Unshaded albedo: the rendered albedo is compared with the image directly (no photometric "
                          "function). View-dependent colour: the albedo is replaced by the third-degree spherical-harmonic "
                          "colour of 2DGS. Both variants also lose the phase switch, which acts on the shading. Columns as "
-                         "in Table~\\ref{tab:main}; lower is better except for the F-score. –: not run."]))
+                         "in Table~\\ref{tab:main}; lower is better except for the F-score and PSNR. –: not run."]))
     ph = lambda l, t, o=False, tm=None: row(l, "itokawa", t, splits=s0, ours=o) | ({"tagmap": tm} if tm else {})  # noqa: E731
     T.append(dict(key="phase", title="Shape accuracy on the five image sets, ordered by phase angle.",
                   lead="First split; mean distance (m) and F-score at 1 m.", sd=False, size="footnotesize", sep=2.0, drop_empty=True,

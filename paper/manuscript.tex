@@ -50,20 +50,17 @@
 {Global shape models of asteroids are needed early in a rendezvous, when only a few dozen images are available.
 Gaussian splatting reconstructs surfaces from such image sets within tens of minutes, but it describes the brightness
 with free view-dependent colours and does not use the known solar illumination as a geometric constraint.}
-{We aim to use the known illumination as a geometric constraint in Gaussian splatting and to assess the resulting shape
-models against mission shape models, one of which was derived without images.}
+{We aim to use the known illumination as a geometric constraint in Gaussian splatting and to validate the resulting shape models against mission shape models, including one independent of images.}
 {In photometrically constrained Gaussian splatting (\pcgs), two-dimensional Gaussian surfels carry a view-independent
 albedo that is shaded by a lunar-Lambert function under the Sun direction of each image. A night-side band beyond the
 terminator is excluded from the silhouette loss, cast shadows or an albedo prior are added depending on the phase
 angle, and watertight meshes are fused from depth maps that agree across views. We applied \pcgs\ to five image sets
 of Itokawa, Ryugu, and Bennu at phase angles of 7--60$^\circ$ and compared it with four Gaussian splatting methods.}
 {The mean distance to the mission shape models is 0.59~m for Itokawa and 0.62~m for Ryugu, 37\% and 15\% lower than
-that of the most accurate competing method. Against the laser-altimeter model of Bennu, it is $0.62\pm0.06$~m,
-compared with more than 3.7~m for the other methods, mainly because of the night-side band. Without the photometric
-rendering, the mean distance increases by 48\% on Itokawa and by 14\% on Ryugu. The volumes agree with the reference
-models to within 0.3\% at the reference scale and to within 3.4\% at the trajectory scale.}
+that of the most accurate competing method. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, against more than 3.7~m for the other methods, mainly owing to the night-side band. Without shading (and hence without cast shadows and albedo prior), the mean distance increases by 48\% on Itokawa and
+14\% on Ryugu. Volumes agree with the reference models to within 0.3\% at the reference scale and 3.4\% at the trajectory scale.}
 {Photometric rendering, combined with a night-side band and consistency-filtered depth fusion, yields watertight
-global shape models with sub-metre mean errors from about 50 images and 30~min of training on a single GPU.}
+global shape models with sub-metre mean distances from about 50 images and 30~min of training on a single GPU.}
 
 \keywords{techniques: image processing --
           methods: numerical --
@@ -112,11 +109,9 @@ In this paper, we present photometrically constrained Gaussian splatting (\pcgs)
 into two-dimensional Gaussian splatting (2DGS). \pcgs\ renders each image from view-independent surfel albedos shaded
 by the lunar-Lambert function under the Sun direction of that image, so that the observed brightness constrains the
 surface orientation. It excludes a night-side band beyond the terminator from the silhouette loss, so that the unlit
-part of the body is retained at high phase angle, and it switches with the phase angle between cast shadows computed
-from the Sun's viewpoint and a total-variation prior on the albedo. We evaluate \pcgs\ on five image sets of Itokawa,
+part of the body is retained at high phase angle, and, depending on the phase angle, it adds either cast shadows computed from the Sun's viewpoint or a total-variation prior on the albedo, a choice we call the phase switch. We evaluate \pcgs\ on five image sets of Itokawa,
 Ryugu, and Bennu with phase angles from 7$^\circ$ to 60$^\circ$, compare it with four Gaussian splatting methods given
-identical inputs, and quantify the contribution of each component by a leave-one-out ablation. For Bennu, the reference
-model was derived from laser altimetry and is therefore independent of images.
+identical inputs, and quantify the contribution of each component by a leave-one-out ablation. The Bennu reference, derived from laser altimetry, is independent of images.
 
 %--------------------------------------------------------------------
 \section{Related work}
@@ -167,20 +162,16 @@ they have not yet been used to reconstruct closed global shape models with Gauss
 
 \subsection{Overview}
 
-Figure~\ref{fig:overview} shows the framework of \pcgs. The input consists of spacecraft images, camera poses refined by
-bundle adjustment, a foreground mask for each image, and the Sun direction of each image in the body-fixed frame. Since
+Figure~\ref{fig:overview} shows the framework of \pcgs, which is built on the 2DGS framework and inherits its rasteriser, its adaptive densification, and its normal-consistency regulariser. The input consists of spacecraft images, camera poses refined by structure from motion (SfM) and bundle adjustment, a foreground mask for each image, and the Sun direction of each image in the body-fixed frame. Since
 the masks are derived from the images, they contain only the illuminated part of the body. The surface is represented
 by two-dimensional Gaussian surfels (Sect.~\ref{sec:2dgs}), which are rendered under the illumination of each training
 image (Sect.~\ref{sec:render}). The night-side band and the phase switch are described in Sect.~\ref{sec:priors}, the
-loss function in Sect.~\ref{sec:losses}, and the extraction of a watertight mesh in Sect.~\ref{sec:extraction}. \pcgs\
-is built on the 2DGS framework and inherits its rasteriser, its adaptive densification, and its normal-consistency
-regulariser.
+loss function in Sect.~\ref{sec:losses}, and the extraction of a watertight mesh in Sect.~\ref{sec:extraction}.
 
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{\figfile{fig1_overview}}
-\caption{Overview of \pcgs. (a) Ryugu reference model lit from the Sun direction of the test image in (c), with the
-cameras of the first split along their true directions (distances compressed): training views in blue, test views in
+\caption{Overview of \pcgs. (a) Ryugu reference model lit from the Sun direction of the test image in (c), with the cameras of one split along their true directions (distances compressed): training views in blue, test views in
 white, and the camera of (c) in orange; yellow arrows indicate the Sun direction. (b) Pipeline: images with their Sun
 directions and camera poses train two-dimensional Gaussian surfels that carry an albedo (inset: trained surfels in a
 120~m window, coloured by their normal); each image is rendered with Eq.~(\ref{eq:render}), and a watertight mesh is
@@ -218,9 +209,10 @@ with the lunar-Lambert function \citep{McEwen1991}
 \Phi(\mzero,\mu) = (1-L)\,\mzero + \frac{2L\,\mzero}{\mzero+\mu}.
 \label{eq:ll}
 \end{equation}
-Here, $\mzero=\max(\vect{n}\cdot\vect{s},0)$ and $\mu=\max(\vect{n}\cdot\vect{v},10^{-3})$ are the cosines of the
-incidence and emission angles, computed with the rendered normal $\vect{n}$ normalised to unit length, $\vect{s}$ is the unit vector towards the Sun computed from the SPICE
-kernels, $\vect{v}$ is the unit vector towards the camera along the pixel ray, and $V\in[0,1]$ is the Sun visibility.
+Here, $\vect{s}$ is the unit vector towards the Sun, computed from the SPICE kernels \citep{Acton1996}, and $\vect{v}$
+is the unit vector towards the camera along the pixel ray. The cosines of the incidence and emission angles are
+$\mzero=\max(\vect{n}\cdot\vect{s},0)$ and $\mu=\max(\vect{n}\cdot\vect{v},10^{-3})$, computed with the rendered normal
+$\vect{n}$ normalised to unit length, and $V\in[0,1]$ is the Sun visibility.
 The function interpolates between Lambert's law ($L=0$) and the Lommel--Seeliger law ($L=1$) and equals unity at normal
 incidence and emission. The partition parameter $L$ is learned as a single scalar per image set. Because the shading is
 computed from the rendered normal, the photometric loss acts directly on the surface orientation. As the body rotates
@@ -246,24 +238,23 @@ where $\sigma$ is the logistic function, $\tau$ controls the softness of the sha
 angle, and $\Delta_\odot$ is the pixel footprint of the Sun view. The slope-dependent bias $b_p$ prevents surfaces lit at
 grazing incidence from shadowing themselves. Gradients reach both the shadowed point and the occluder, so that shadow
 edges constrain the geometry. To prevent depth noise from producing spurious shadows, $V_p$ is applied only where the
-observed image is darker than a fraction $\gamma$ of the unshadowed prediction $A\,\Phi$, and $V_p=1$ elsewhere. Because
-this gating requires the observed image, images rendered for test views contain no cast shadows.
+observed image is darker than a fraction $\gamma$ of the unshadowed prediction $A\,\Phi$, and $V_p=1$ elsewhere. Because this gating requires the observed image, test images are rendered without cast shadows.
 
 \subsection{Night-side band and phase switch}
 \label{sec:priors}
 
 The silhouette loss $\mathcal{L}_m$ is the binary cross-entropy between the accumulated opacity $O$ and the foreground
-mask $M$. At high phase angle, a large part of the body beyond the terminator is dark in every image and absent from
-the mask, and the silhouette loss would treat it as empty space. We therefore exclude from the silhouette loss a
-night-side band that extends the mask away from the projected Sun direction over a width
+mask $M$. In each image at high phase angle, a large part of the body lies beyond the terminator; it is as dark as the sky,
+absent from the mask, and treated as empty space by the silhouette loss. We therefore exclude from the silhouette loss a
+night-side band of width
 \begin{equation}
 w_\mathrm{night} = 1.5\,r\,(1-\cos\alpha) + 5~\mathrm{pixels},
 \label{eq:night}
 \end{equation}
 which is 1.5 times the maximum width of the unlit crescent of a sphere with the apparent radius $r$ of the body, plus a
-margin. In practice, the band consists of the pixels outside the mask that are reached when the
-mask is shifted by up to $w_\mathrm{night}$ pixels in the image direction pointing away from the Sun. The first term amounts to 2\% of the apparent radius at $\alpha=10^\circ$ and to 35\% at
-$40^\circ$. The photometric loss still applies within the band, so the night side remains constrained by the images in
+margin. The band comprises the pixels outside the mask that are covered when the mask is shifted by up to $w_\mathrm{night}$
+pixels away from the projected Sun direction. The first term amounts to 2\% of the apparent radius at $\alpha=10^\circ$ and to 35\% at
+$40^\circ$. The image loss still applies within the band, and each part of the night side remains constrained by the images in
 which it is lit.
 
 At low phase angle, the shading contrast is weak, and albedo and slope are difficult to separate, whereas cast shadows
@@ -275,10 +266,8 @@ variation of the rendered albedo over the body:
 \label{eq:tv}
 \end{equation}
 where $\tilde A=A/O$ is the opacity-normalised albedo and $\Omega$ is the set of body pixels with $O>0.5$. This albedo
-prior favours a piecewise-constant albedo and thus attributes smooth brightness variations to the geometry. We refer to
-this choice between the albedo prior below 15$^\circ$ and cast shadows from 15$^\circ$ upwards as the phase switch. It
-is a heuristic: our data constrain the threshold only to the interval between 10.4$^\circ$ and 18.5$^\circ$
-(Sect.~\ref{sec:rule}).
+prior favours a piecewise-constant albedo and thus attributes smooth brightness variations to the geometry. Together with the cast shadows used from 15$^\circ$ upwards, this albedo prior forms the phase switch. The threshold
+of 15$^\circ$ is heuristic (Sect.~\ref{sec:rule}).
 
 \subsection{Loss function}
 \label{sec:losses}
@@ -315,8 +304,7 @@ Poisson reconstruction \citep{Kazhdan2013}, and the largest connected component 
 regions that no image constrains, such as the deep neck of Itokawa, but tends to pull them inwards. We therefore replace
 the vertices that lie more than 2~m from a truncated signed-distance fusion \citep{Curless1996} of the same depths by a
 surface of minimal thin-plate energy \citep[mesh fairing;][]{Botsch2004}, which keeps the mesh watertight. Finally,
-the rendered median depth lies slightly in front of the surface: in our data, the SfM tie points lie
-0.1--0.2 pixel scales behind the mesh. We therefore offset the mesh along its normals by the median signed distance of
+the rendered median depth lies slightly in front of the surface: in our data, the SfM tie points (Sect.~\ref{sec:images}) lie 0.1--0.2 pixels behind the mesh. We therefore offset the mesh along its normals by the median signed distance of
 the tie points with reprojection errors below one pixel. This step, like the rest of the extraction, uses no reference
 model.
 
@@ -324,7 +312,7 @@ model.
 \section{Experiments and discussion}
 \label{sec:setup}
 
-\subsection{Datasets of asteroids}
+\subsection{Image sets}
 \label{sec:images}
 
 We used five image sets of three asteroids, which are summarised in Table~\ref{tab:data} and shown in
@@ -336,7 +324,7 @@ show the same body under three illumination geometries. The Bennu images were ac
 OSIRIS-REx during the Approach and Preliminary Survey phases, at distances of 9--38~km and phase angles of
 26--60$^\circ$.
 
-From each observation sequence, we selected 60 images that show the whole body and are evenly spaced in sub-spacecraft
+From each sequence, we selected 60 images that show the whole body and are evenly spaced in sub-spacecraft
 longitude; only 48 were available for Ryugu at 40$^\circ$. The Bennu images were selected from the SPICE geometry, so
 some of them show only part of the body. All images have $1024\times1024$ pixels. The calibrated ONC-T and MapCam products were converted to 8 bits with
 one scale factor per image set, the AMICA images were used as raw 8-bit values, and no further exposure normalisation
@@ -375,10 +363,9 @@ for Itokawa and Ryugu and between $-4^\circ$ and $13^\circ$ for Bennu; sub-solar
 
 Initial camera poses were computed from the SPICE kernels \citep{Acton1996}. We matched SIFT features between all image
 pairs with COLMAP \citep{Schonberger2016} and refined the poses by bundle adjustment, starting from the SPICE poses with a
-reprojection-error threshold that was reduced from 40 to 4 pixels. All images of a set, including the test images, entered the bundle adjustment, so the SfM tie
-points, which initialise the surfels and serve the post-processing, include observations from test images; no test
-image was used to train the surfels. A similarity transform maps the refined
-camera centres onto the SPICE centres, so that the scene is expressed in the body-fixed frame at the SPICE scale and the
+reprojection-error threshold that was reduced from 40 to 4 pixels. All images of a set, including the test images, entered the bundle adjustment. The SfM tie points,
+which initialise the surfels and are used in the post-processing, therefore include observations from test images,
+but no test image was used to optimise the surfels. A similarity transform mapped the refined camera centres onto the SPICE centres, so that the scene is expressed in the body-fixed frame at the scale of the SPICE trajectory and the
 SPICE Sun vectors apply directly. The foreground masks were obtained by thresholding each image, at 8~DN for AMICA and at
 4\% of the 99.9th percentile of the brightness for ONC-T and MapCam, keeping the largest connected region, and moving
 its edge to the half-maximum of the blurred limb.
@@ -406,8 +393,8 @@ P(\epsilon) = \frac{1}{N}\sum_{\vect{x}\in\mathcal{X}}\left[d(\vect{x},\mathcal{
 R(\epsilon) = \frac{1}{N}\sum_{\vect{y}\in\mathcal{Y}}\left[d(\vect{y},\mathcal{X})<\epsilon\right],
 \label{eq:pr}
 \end{equation}
-and the F-score is their harmonic mean; we use $\epsilon=1$~m unless stated otherwise. The Chamfer distance is the mean
-of the two directed mean distances, and the normal error is the mean angle between the normal of each sample and the
+and the F-score is their harmonic mean; we use $\epsilon=1$~m unless stated otherwise. We call $d(\vect{y},\mathcal{X})$ the completeness distance of a reference sample $\vect{y}$. The Chamfer distance
+is the mean of the two directed mean distances, and the normal error is the mean angle between the normal of each sample and the
 normal of its closest point on the other surface. For novel view synthesis, we report the peak signal-to-noise ratio
 (PSNR), the structural similarity index (SSIM), and the learned perceptual image patch similarity (LPIPS) on the test
 images \citep{Wang2004SSIM,Zhang2018LPIPS}, after fitting one gain and offset per image, because methods with per-image
@@ -416,11 +403,10 @@ over the three splits. Since any two splits share at least 40 of their 50 traini
 describe the sensitivity to the image selection rather than the full uncertainty.
 
 \paragraph{Post-processing and registration.}\label{sec:protocol} Every mesh, including those of \pcgs, received the
-same reference-free post-processing: a translation and a normal offset fitted to the SfM tie points, 20 iterations of
-Taubin smoothing \citep{Taubin1995}, and the selection of the largest connected component. The alignment to the tie
-points removes global offsets between a mesh and the bundle-adjusted cameras, such as the one-pixel offset described in
+same reference-free post-processing: a translation and a normal offset fitted to the SfM tie points (tie-point alignment), 20 iterations of Taubin
+smoothing \citep{Taubin1995}, and the selection of the largest connected component. The tie-point alignment removes global offsets between a mesh and the bundle-adjusted cameras, such as the one-pixel offset described in
 Sect.~\ref{sec:implementation}. Table~\ref{tab:protocol} compares the meshes as extracted, after the alignment, after
-smoothing, and after an ICP registration of each mesh to the reference; \pcgs\ ranks first under all four protocols.
+smoothing, and after an ICP registration of each mesh to the reference.
 
 \input{tables/protocol}
 
@@ -441,27 +427,25 @@ with the camera distance. For the extraction, the six neighbouring views are tho
 
 The projection of the 2DGS code, and of codes derived from the same rasteriser, assumes a principal point at $(W-1)/2$
 pixels for an image of width $W$, whereas COLMAP places the centre of pixel $i$ at $i+1/2$, and the back-projection of
-depth uses a third convention, $W/2$. Together, these conventions shift the rendering by one pixel relative to the
-bundle-adjusted cameras: a rendered depth map that is back-projected and reprojected with the COLMAP camera is displaced
-by $(-1,-1)$~pixel. In \pcgs, the projection and the back-projection follow the COLMAP convention, which reduces this
-residual to $10^{-3}$~pixel. The baselines were run with their released code and therefore retain the offset in
-training and extraction; for them, the alignment to the tie points removes its global part. On Ryugu, this alignment
-removes a translation of 2.15~m for PGSR and 1.9~m for Asteroid-GS along the spin axis, about one pixel at the 2.2~m
-pixel scale, and reduces the mean distance of PGSR from 1.51 to 0.73~m; for \pcgs, it changes nothing.
+depth uses a third convention, $W/2$. Together, these conventions shift the rendering by one pixel relative to the bundle-adjusted cameras. In \pcgs, the
+projection and the back-projection follow the COLMAP convention, which reduces the reprojection residual of rendered
+depth from one pixel to $10^{-3}$~pixel. The baselines were run with their released code and retain the offset; for
+them, the tie-point alignment removes its global part, which on Ryugu is a translation of 2.15~m for PGSR and 1.9~m for
+Asteroid-GS along the spin axis, and reduces the mean distance of PGSR from 1.51 to 0.73~m.
 
 We compared \pcgs\ with four Gaussian splatting methods that extract surfaces: 2DGS \citep{Huang2024}, GOF
 \citep{Yu2024GOF}, PGSR \citep{Chen2024PGSR}, and Asteroid-GS \citep{Zhang2025AsteroidGS}. Each method was trained with
 the code released by its authors and meshed as they recommend; for 2DGS, we used its configuration for object-centric
 scenes. All methods received the same images, poses, and splits, and the same object extent of 1.1 times the
-99th-percentile radius of the SfM tie points. None of the baselines uses a silhouette loss; 2DGS and PGSR use the foreground masks only to discard
-background depth before fusion. Asteroid-GS was also evaluated with the scene extent that its
-released code derives from the camera positions, a variant denoted Asteroid-GS$^\dagger$. The baselines were run on
-Itokawa, Ryugu at 19$^\circ$, and Bennu, where GOF could not be run because of its memory requirement; at 7$^\circ$ and
-40$^\circ$, only some of them were run (Sect.~\ref{sec:phase}). As a reference for image fidelity alone, we also trained
-Mip-Splatting \citep{Yu2024Mip} on one split of Itokawa and fused a mesh from its rendered depth. All runs used a single
-NVIDIA A100 GPU of a shared node. Training \pcgs\ took 17--47~min per reconstruction, with a median of 27~min, and the
-mesh extraction a further 4--10~min, compared with 29--31~min for PGSR and 22--52~min for Asteroid-GS on Itokawa and
-Ryugu.
+99th-percentile radius of the SfM tie points. None of the baselines uses a silhouette loss: 2DGS and PGSR use the foreground masks only to discard
+background depth before fusion, and GOF and Asteroid-GS were run without masks. Asteroid-GS was also evaluated with the scene extent that its
+released code derives from the camera positions, a variant denoted Asteroid-GS$^\dagger$. The baselines were run on Itokawa, Ryugu at 19$^\circ$, and Bennu (GOF not on Bennu, because of its memory
+requirement), and some of them also at 7$^\circ$ and 40$^\circ$ (Sect.~\ref{sec:phase}). As a reference for image fidelity alone, we also trained
+Mip-Splatting \citep{Yu2024Mip} on one split of Itokawa and fused a mesh from its rendered depth.
+
+All runs used a single NVIDIA A100 GPU on a shared node, so the run times are indicative. Training \pcgs\ took
+17--47~min per reconstruction, with a median of 27~min, and the mesh extraction a further 4--10~min; training PGSR
+and Asteroid-GS took 29--31 and 22--52~min, respectively, on Itokawa and Ryugu.
 
 \begin{table}
 \caption{Settings of \pcgs, identical for all image sets.}
@@ -485,7 +469,7 @@ Cast shadows & $\alpha\geq15^\circ$; Sun view $1024^2$ pixels; \\
  & $\tau=0.5$~m, $b_0=3$~m, $\gamma=0.9$ \\
 Extraction & $\geq$3 of 6 views agree within 1.5~m; \\
  & Poisson depth 11; fairing beyond 2~m \\
-Scene extent & 1.1 $\times$ 99th-percentile SfM radius \\
+Object extent & 1.1 $\times$ 99th-percentile SfM radius \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -522,24 +506,23 @@ distance per 5$^\circ$ latitude band of the reference; grey shading marks latitu
 
 \paragraph{Comparison with Gaussian splatting methods.} Table~\ref{tab:main} and Fig.~\ref{fig:numbers}a,b compare the
 methods on Itokawa and on the 19$^\circ$ Ryugu image set. \pcgs\ achieves the lowest mean distance, RMSE, and Chamfer
-distance and the highest F-score at 1~m on both bodies. Its mean distance is 0.59~m on Itokawa and 0.62~m on Ryugu,
-37\% lower than that of Asteroid-GS$^\dagger$ on Itokawa and 15\% lower than that of PGSR on Ryugu, which are the most
-accurate competing methods on these bodies. The RMSE is lower by 44\% and 24\%, respectively. The ranking is the same on
-each split. On Ryugu, part of the margin over PGSR may come from the pixel convention, which \pcgs\ corrects in training
-and extraction, whereas the post-processing removes only the global offset from the baselines
-(Sect.~\ref{sec:implementation}). 2DGS and GOF reach mean distances of 2.4--6.6~m.
+distance and the highest F-score at 1~m on both bodies. 2DGS and GOF reach mean distances of 2.4--6.6~m. The mean distance of \pcgs, 0.59~m on Itokawa
+and 0.62~m on Ryugu, is 37\% and 15\% lower than that of the most accurate competing method on each body
+(Asteroid-GS$^\dagger$ and PGSR), and its RMSE is lower by 44\% and 24\%. \pcgs\ ranks first on every split and under
+all four post-processing protocols (Table~\ref{tab:protocol}). On Ryugu, part of the margin over PGSR may come from the
+pixel convention, which \pcgs\ corrects in training and extraction, whereas the post-processing removes only the global
+offset from the baselines (Sect.~\ref{sec:implementation}); without the correction, \pcgs\ still reaches 0.65~m
+(Sect.~\ref{sec:ablation}).
 
 The lower errors are not obtained at the expense of completeness. The accuracy and the completeness at 1~m both exceed
 those of every other method (Table~\ref{tab:shape_full}), and the cumulative distributions in Fig.~\ref{fig:curves}a--d
 show the largest lead at sub-metre distances. On Ryugu, \pcgs\ and PGSR perform similarly over most of the surface:
 their Chamfer distances differ by only 0.03~m, and PGSR has a slightly higher F-score at 2~m. The advantage of \pcgs\ on
-this body lies mainly in the absence of large errors, which is why it is most pronounced in the RMSE. Among the
-geometric measures, only the normal error does not favour \pcgs: Asteroid-GS has the lowest normal error on both
-bodies, and on Itokawa PGSR is also slightly better than \pcgs. This is probably because smooth surfaces carry little
-high-frequency normal error, which favours Asteroid-GS, and because the surfel normals are noisy at the pixel scale,
-where the shading constrains the orientation only up to the image resolution. The meshes of \pcgs\ are closed. At the
-registered scale, their volumes agree with those of the reference models to within 0.3\% on Itokawa and 0.01\% on Ryugu;
-in the camera frame, which has the SPICE scale, the volume errors are $-3.3$\% and $+0.5$\% (Table~\ref{tab:volume}).
+this body lies mainly in the absence of large errors, which is why it is most pronounced in the RMSE. Apart from the F-score at 2~m on Ryugu, only the normal
+error does not favour \pcgs: Asteroid-GS has the lowest normal error on both bodies, and on Itokawa PGSR is also
+slightly better than \pcgs. This is probably because the smooth surfaces of Asteroid-GS carry little high-frequency
+normal error, whereas the surfel normals of \pcgs\ are noisy at the pixel scale, below which the shading cannot
+constrain the orientation.
 
 \input{tables/shape_full}
 
@@ -552,7 +535,7 @@ in the camera frame, which has the SPICE scale, the volume errors are $-3.3$\% a
 \toprule
  & & \multicolumn{2}{c}{Volume error (\%)} \\
 \cmidrule(lr){3-4}
-Image set & Scale & registered & SPICE scale \\
+Image set & Scale & registered & trajectory scale \\
 \midrule
 Ryugu, 7$^\circ$  & 0.9993 & $+0.11$ & $+0.32$ \\
 Itokawa, 10$^\circ$ & 1.0105 & $-0.19$, $-0.27$, $-0.25$ & $-3.27$, $-3.35$, $-3.33$ \\
@@ -563,7 +546,7 @@ Bennu, 26--60$^\circ$ & 0.9981 & $+0.25$, $+0.29$, $+0.32$ & $+0.82$, $+0.86$, $
 \end{tabular}
 \tablefoot{One value per available split. Scale: that of the similarity transform from the camera frame, which has
 the SPICE scale, to the reference frame (Sect.~\ref{sec:reference}). Registered: the volume after this transform;
-SPICE scale: the volume in the camera frame. Reference volumes: 0.017734~km$^3$ (Itokawa), 0.37743~km$^3$ (Ryugu),
+Trajectory scale: the volume in the camera frame, which has the scale of the SPICE trajectory. Reference volumes: 0.017734~km$^3$ (Itokawa), 0.37743~km$^3$ (Ryugu),
 and 0.061316~km$^3$ (Bennu). Some meshes contain up to five non-manifold edges among about $10^7$ and no boundary
 edges; their volumes are computed from the closed surface. Of the baselines, only GOF produces closed meshes
 consistently, with registered volume errors of $-1.4$ to $-3.0$\% on Itokawa and $+0.5$ to $+0.6$\% on Ryugu.}
@@ -579,20 +562,23 @@ reference (Fig.~\ref{fig:recon}c,g). The largest errors of \pcgs\ occur in a few
 poorly covered by the images (Fig.~\ref{fig:recon}d). PGSR has errors in the same regions, and Asteroid-GS has extended
 areas lying 1--3~m outside the reference on both bodies (Fig.~\ref{fig:recon}d,h).
 
+\paragraph{Volumes.} The meshes of \pcgs\ are closed. At the registered scale, their volumes agree with those of the
+reference models to within 0.3\% on Itokawa and 0.01\% on Ryugu. At the trajectory scale, that is, in the camera frame
+before the registration, the volume errors are $-3.3$ to $-3.4$\% on Itokawa and $+0.5$\% on Ryugu
+(Table~\ref{tab:volume}).
+
 \paragraph{Error distribution over the surface.} The errors of all methods are concentrated where the observation geometry
 constrains the surface poorly. On Itokawa, the completeness distance of \pcgs\ varies little with latitude, whereas PGSR
 has large errors at southern latitudes and Asteroid-GS at mid-latitudes (Fig.~\ref{fig:curves}e). On Ryugu, all methods
 are least accurate near the poles (Fig.~\ref{fig:curves}f): the completeness distance of \pcgs\ and PGSR increases from
 0.5--0.7~m at low latitudes to 2.5--3.7~m near the poles, and that of Asteroid-GS is higher at nearly all latitudes. The
 global maps in Fig.~\ref{fig:maps} show the same pattern. On Itokawa and Ryugu, \pcgs\ and PGSR have small errors over
-most of the surface, apart from a few isolated patches and, on Ryugu, the two poles, whereas Asteroid-GS has large
-contiguous regions with errors above 2.5~m on all three bodies (Fig.~\ref{fig:maps}c,f,i). Two factors contribute to the
+most of the surface, apart from a few isolated patches and, on Ryugu, the two poles, whereas Asteroid-GS has large contiguous regions with errors above 2.5~m on both bodies (Fig.~\ref{fig:maps}c,f). Two factors contribute to the
 polar errors. All five image sets were acquired from near-equatorial viewpoints, with the Sun within 8$^\circ$ of the
 equatorial plane (Table~\ref{tab:data}), so the polar regions are seen at grazing emission and illuminated at grazing
 incidence in every image, and the shading constrains mainly the equatorial component of the normal
 (Sect.~\ref{sec:render}). In addition, the Ryugu reference is itself least accurate near the poles \citep{ChenH2025}.
-Since all methods show the same increase towards the poles, these errors reflect the data rather than a property of
-\pcgs.
+Since all methods show the same increase towards the poles, these errors reflect the observation geometry and the reference rather than a property of \pcgs.
 
 \begin{figure*}
 \centering
@@ -621,7 +607,8 @@ patches, and Asteroid-GS produces a smooth body that lies far inside the referen
 PGSR vertices lie more than 3~m outside the reference, and 11.3\% of the Asteroid-GS vertices more than 3~m inside it.
 In contrast, the mesh of \pcgs\ is complete, reproduces the equatorial ridge and the large boulders, and has a signed
 distance centred on zero. Its largest errors form a single region, containing 1.4\% of the vertices, in which the
-surface lies more than 3~m outside the reference; this region may consist of surface that grew into the night-side band.
+surface lies more than 3~m outside the reference; this region may be surface that grew outwards into the night-side band, where the silhouette loss no longer
+constrains it.
 At the scale of the window (Fig.~\ref{fig:recon}j), \pcgs\ recovers a few large blocks but smooths the dense field of
 small boulders resolved by the laser altimeter. The window is resolved at 0.67~m per pixel in this test image, whereas
 the training images resolve it at up to 2.6~m per pixel. The global maps show the same behaviour
@@ -635,9 +622,9 @@ phase angle of 45$^\circ$, the outline of the reference model extends well beyon
 night-side band (Fig.~\ref{fig:night}a). Without the band, the silhouette loss treats this region as empty space: the
 surface is removed where the body is dark in most training views and bulges outwards elsewhere, and 16\% of the vertices
 lie more than 6~m from the reference (Fig.~\ref{fig:night}b,d). With the band, this fraction falls to 1\%, and the
-signed distance is centred on zero. The baselines use no silhouette loss, but the night side is also
-unconstrained for them, because it is dark in the training images, and their meshes show removed and displaced regions
-as well (Fig.~\ref{fig:recon}l). The comparison on Bennu therefore shows mainly that the night side
+signed distance is centred on zero. The baselines use no silhouette loss, but in each training image the unlit part of the
+body is as dark as the sky, so the image loss cannot distinguish unlit surface from empty space there, and their meshes
+show removed and displaced regions as well (Fig.~\ref{fig:recon}l). The comparison on Bennu therefore shows mainly that the night side
 must be treated explicitly at high phase angle; it does not isolate the contribution of the photometric model, which is
 quantified in Sect.~\ref{sec:ablation}.
 
@@ -672,8 +659,8 @@ Asteroid-GS, trained on the 40$^\circ$ images, has a broad error distribution wi
 both directions.
 
 The fitted partition parameter $L$ also depends on the phase angle. On Ryugu, it decreases from 0.78 at 7$^\circ$ to
-0.62 at 19$^\circ$ and 0.37 at 40$^\circ$, with differences between splits below 0.01 where several splits were
-trained, and the value of 0.64 for Itokawa at 10$^\circ$ lies between the first two. \citet{McEwen1991} found the same
+0.62 at 19$^\circ$ and 0.37 at 40$^\circ$, with differences between splits below 0.01 where several splits were trained. The value for Itokawa at
+10$^\circ$, 0.64, falls between the 7$^\circ$ and 19$^\circ$ values of Ryugu. \citet{McEwen1991} found the same
 trend for the Moon. The disk-resolved photometric models of Ryugu and Bennu \citep{Tatsumi2020,Golish2021} describe
 the phase dependence with separate phase functions, so their parameters cannot be compared directly with $L$. On
 Bennu, $L$ is about 0.1. Because Eq.~(\ref{eq:ll}) contains no phase function and the Bennu images span
@@ -709,13 +696,12 @@ reproduces a test image of Ryugu best, \pcgs\ renders the boulders with the corr
 and Asteroid-GS renders a nearly uniform surface, because its geometry is smooth and its per-image appearance network has
 no embedding for an unseen image. Over all test images, PGSR has the highest PSNR of the surface reconstruction methods,
 39.3~dB on Itokawa and 35.2~dB on Ryugu, compared with 36.5 and 31.3~dB for \pcgs\ (Fig.~\ref{fig:nvs}c and
-Table~\ref{tab:images_full}), yet its shapes are less accurate. The lower PSNR of \pcgs\ reflects its lack of
-appearance parameters with which to fit residual brightness variations, and the absence of cast shadows in its
-renderings of test views (Sect.~\ref{sec:render}) leaves positive residuals along the shadowed limbs
-(Fig.~\ref{fig:nvs}d). Conversely, high image fidelity can coexist with large shape errors. GOF reaches 38.0~dB on
+Table~\ref{tab:images_full}), yet its shapes are less accurate. The lower PSNR of \pcgs\ has two causes: it has no appearance parameters
+with which to fit residual brightness variations, and its test images are rendered without cast shadows
+(Sect.~\ref{sec:render}), which leaves positive residuals along the shadowed limbs (Fig.~\ref{fig:nvs}d). Conversely, high image fidelity can coexist with large shape errors. GOF reaches 38.0~dB on
 Itokawa with a mean distance of 2.40~m, and Mip-Splatting reaches 42.6~dB with a mean distance of 2.48~m
 (Tables~\ref{tab:shape_full} and~\ref{tab:images_full}). An appearance model with enough freedom can reproduce the
-images from an inaccurate surface, so image metrics alone are not suitable for ranking methods for shape modelling.
+images from an inaccurate surface, so image metrics alone cannot rank methods for shape modelling.
 
 \input{tables/images_full}
 
@@ -735,35 +721,40 @@ comparable accuracy rather than a ranking.
 \subsection{Ablation studies}
 \label{sec:ablation}
 
-We now quantify the contribution of each component of \pcgs. Table~\ref{tab:ablation} lists models in which one
+Table~\ref{tab:ablation} quantifies the contribution of each component of \pcgs\ with models in which one
 component is removed or replaced while all others are kept, trained on the first split of each image set and evaluated
 as in Table~\ref{tab:main}. Removing the photometric rendering, the multi-view consistency, or the silhouette loss increases
-the mean distance and the RMSE on both Itokawa and Ryugu, whereas the night-side band matters only at high phase
-angle.
+the mean distance and the RMSE on both Itokawa and Ryugu, whereas the night-side band affects the mean distance only at high phase angle.
 
 \input{tables/ablation}
 
 \subsubsection{Effects of the photometric rendering}
 \label{sec:abl_photo}
 
-When the albedo is compared with the image directly, without the photometric function, the mean
-distance increases from 0.60 to 0.89~m on Itokawa and from 0.62 to 0.70~m on Ryugu at 19$^\circ$, the RMSE on
-Itokawa more than doubles, from 1.07 to 2.46~m, and the normal error increases on both bodies. Because all other
-components are unchanged, this comparison isolates the contribution of the photometric model within \pcgs.
+When the albedo is compared with the image directly, without the photometric function, the mean distance increases
+from 0.60 to 0.89~m on Itokawa and from 0.62 to 0.70~m on Ryugu at 19$^\circ$. On Itokawa, the RMSE more than doubles,
+from 1.07 to 2.46~m, and the normal error increases on both bodies. Because the phase switch acts on the shading, it is
+removed as well, so this comparison measures the photometric model together with the phase switch. The model without
+the phase switch separates the two. Compared with it, removing the shading on Itokawa increases the mean distance from
+0.68 to 0.89~m and the normal error from 14.4$^\circ$ to 16.3$^\circ$ and lowers the F-score at 1~m from 0.841 to
+0.799, whereas the RMSE remains at 2.46~m. The shading thus improves the bulk of the surface, and the albedo prior
+mainly removes large errors.
+Replacing the shaded albedo by the view-dependent colour of 2DGS, the usual appearance model of Gaussian splatting,
+within the otherwise unchanged pipeline increases the mean distance on Ryugu from 0.62 to 0.65~m and the RMSE from 0.89
+to 1.02~m, whereas the PSNR on the test images rises from 31.4 to 35.5~dB. The view-dependent colour thus fits the
+images better but constrains the geometry less. With this colour, \pcgs\ is still more accurate than PGSR on the same
+split (0.72~m), so on Ryugu most of the margin over PGSR comes from the other components of the pipeline.
 
 \subsubsection{Effects of multi-view consistency and the silhouette loss}
 
 Multi-view consistency is the most important single constraint. Without it, the mean distance increases from 0.60 to
 1.26~m on Itokawa and from 0.62 to 0.82~m on Ryugu, and the F-score at 1~m decreases from 0.849 to 0.627 and from 0.798
-to 0.694. Without the silhouette loss, the mean distance increases to 0.97~m on Itokawa and to 0.64~m on Ryugu. The
-shading and the multi-view loss are therefore complementary: multi-view consistency fixes the depth of textured
-surfaces, and shading constrains the orientation of smooth regions.
+to 0.694. Without the silhouette loss, the mean distance increases to 0.97~m on Itokawa and to 0.64~m on Ryugu.
 
 \subsubsection{Effects of the night-side band}
 
-The night-side band has little effect at low phase angle, and its effect increases with the phase angle. On Itokawa, the
-mean distance with and without the band differs by at most 0.02~m (0.59 and 0.60~m over three splits; 0.60 and 0.58~m
-on the first split), although the band increases the RMSE of the first split from 0.92 to 1.07~m. On Ryugu at
+The effect of the night-side band on the mean distance increases with the phase angle. On the first split of Itokawa,
+the band changes the mean distance only from 0.58 to 0.60~m, although it increases the RMSE from 0.92 to 1.07~m. On Ryugu at
 40$^\circ$, it reduces the mean distance from 0.71 to 0.66~m, and on Bennu from 4.18 to 0.59~m.
 
 \subsubsection{Effects of the phase switch}
@@ -777,8 +768,8 @@ attributed to albedo variations instead of slopes, and larger areas of the surfa
 each of the three splits (Fig.~\ref{fig:priors}b) and reduce the mean distance from 0.65 to 0.62~m
 (Fig.~\ref{fig:priors}d). On Bennu, they reduce the RMSE by 63\%, although both models remain far from the reference
 without the band. In contrast, the switch brings no improvement at 7$^\circ$ and 40$^\circ$. At 7$^\circ$, the albedo
-prior slightly lowers the F-score, from 0.719 to 0.708, and at 40$^\circ$, cast shadows reduce the normal error by
-0.7$^\circ$ without changing the distances. These differences amount to at most 0.02~m in mean distance and are based on
+prior slightly lowers the F-score, from 0.719 to 0.708, and at 40$^\circ$, cast shadows reduce the normal error by 0.7$^\circ$
+but lower the F-score from 0.719 to 0.709 without changing the mean distance. These differences amount to at most 0.02~m in mean distance and are based on
 one or two splits. Using both the albedo prior and cast shadows is worse than using cast shadows alone at 19$^\circ$ and
 40$^\circ$, possibly because the albedo prior then suppresses the brightness contrast that the shadows explain. As no
 image set lies between 10.4$^\circ$ and 18.5$^\circ$, the data constrain the threshold only to this interval.
@@ -839,19 +830,20 @@ of the SPC reference itself, 0.60~m.
 \paragraph{Role of the illumination.} The photometric model adds information where multi-view matching provides the least. In sparse
 image sets with narrow baselines, many regions are smooth or seen from few directions, and in such regions the shading
 under several Sun directions constrains the orientation of the surface, much as the brightness constrains the slopes
-between stereo control points in SPC \citep{Gaskell2008}. The ablation supports this picture: without shading, the mean
-distance increases by 48\% on Itokawa and by 14\% on Ryugu (Sect.~\ref{sec:abl_photo}). The larger effect on Itokawa
+between stereo control points in SPC \citep{Gaskell2008}. The ablation supports this picture: without the shading and the phase switch, the mean distance increases by 48\%
+on Itokawa and by 14\% on Ryugu (Sect.~\ref{sec:abl_photo}). On Ryugu, however, the view-dependent colour of Gaussian
+splatting performs only 5\% worse than the shading when the rest of the pipeline is kept, so the photometric model
+accounts for only a small part of the margin over the baselines on this body. The larger effect on Itokawa
 is consistent with its smooth Muses-C region, but the two bodies also differ in pixel scale and in their reference
-models, so this difference does not demonstrate it. The separation of albedo and shading is also incomplete. In the
-decomposition of Fig.~\ref{fig:overview}c, the rendered albedo retains dark patches next to boulders, which shows that
-part of the shading and of the short shadows at the boulder scale is absorbed by the albedo. The photometric
+models, so the comparison cannot establish this cause. The separation of albedo and shading is also incomplete. In the
+decomposition of Fig.~\ref{fig:overview}c, the rendered albedo retains dark patches next to boulders, indicating that part of the shading and of the short shadows at the boulder scale is absorbed by the albedo. The photometric
 constraint therefore acts mainly at scales of several pixels and above. The comparison with the baselines, in
-contrast, combines the effect of the photometric model with those of the night-side band, the extraction, and the
-pixel convention, which the baselines lack (Sect.~\ref{sec:implementation}).
+contrast, combines the effect of the photometric model with those of the silhouette loss, the night-side band, the
+extraction, and the pixel convention, which the baselines lack (Sect.~\ref{sec:implementation}).
 
 \paragraph{Limitations.} The Itokawa and Ryugu references were derived from images and may share systematic errors with
 image-based methods. The Itokawa reference was built by SPC, which relies on the same photometric assumption as \pcgs,
-and the Ryugu reference was built from images taken at 5--7~km \citep{ChenH2025}, which do not overlap with ours. The
+and the Ryugu reference was built from images taken at 5--7~km \citep{ChenH2025}, none of which is in our image sets. The
 references also contain errors of their own, which are largest where their source data were sparse, for instance near
 the poles of Ryugu \citep{ChenH2025}, so the differences between methods at high latitudes (Fig.~\ref{fig:curves}f)
 should be interpreted with caution. The method was developed on the Itokawa and 19$^\circ$ Ryugu image sets; the
@@ -859,18 +851,18 @@ should be interpreted with caution. The method was developed on the Itokawa and 
 night-side band. Only the 7$^\circ$ Ryugu set played no part in the development, and on it, \pcgs\ has its largest mean
 distance, 0.75~m.
 
-The scale of every reconstruction is fixed by the registration to the reference. With the SPICE scale alone, the volume
-errors range from $-3.4$\% on Itokawa to $+1.0$\% on Ryugu at 40$^\circ$ (Table~\ref{tab:volume}), and a bulk density
+The scale of every reconstruction is fixed by the registration to the reference. At the trajectory scale, the volume errors range from $-3.4$\% on Itokawa to $+1.0$\% on Ryugu at 40$^\circ$ (Table~\ref{tab:volume}), and a bulk density
 derived from a first shape model would inherit this uncertainty. Regions that no image constrains, such as the poles of
-Ryugu and the deep neck of Itokawa, are closed by a smooth surface and should be flagged as unmeasured in derived
-products. The photometric model is a single lunar-Lambert function per image set, without a phase function or
+Ryugu and the deep neck of Itokawa, are closed by a smooth surface and should be flagged as unmeasured in derived products. Within the night-side band, the silhouette loss no longer
+prevents the surface from growing outwards; on Bennu, 1.4\% of the vertices lie more than 3~m outside the reference in
+such a region. The photometric model is a single lunar-Lambert function per image set, without a phase function or
 per-image exposure terms, and albedo variations at the scales suppressed by the total-variation prior, such as the
 brighter Muses-C region of Itokawa, are not represented explicitly. A photometric model with a phase function, fitted
 jointly across phase angles \citep{Hapke2012}, could replace the phase switch with a continuous description, and $L$
 would then no longer have to absorb the phase dependence of the brightness on Bennu. Several thresholds are set in
 metres rather than in pixels (Table~\ref{tab:settings}); across our data, they correspond to 0.2--5 pixels and would
-have to be rescaled for images of other resolutions. The baselines were run with their released code, without the
-night-side band and without the corrected pixel convention, and the comparison does not include a classical SfM-MVS
+have to be rescaled for images of other resolutions. The baselines were run with their released code, without a silhouette loss, the night-side band, or the corrected
+pixel convention, and GOF and Asteroid-GS without masks; the comparison does not include a classical SfM-MVS
 pipeline \citep{Furukawa2010,Schonberger2016MVS} or a neural implicit method trained on the same images. Finally, all
 image sets are hovering sequences that cover all longitudes and have SPICE-based poses; shorter arcs, such as those of
 a flyby, and less accurate poses remain to be tested.
@@ -878,8 +870,7 @@ a flyby, and less accurate poses remain to be tested.
 \paragraph{Implications for mission operations.} \pcgs\ requires only the images, their SPICE geometry, and a bundle
 adjustment of the camera poses, and its training time is comparable to that of the other Gaussian splatting methods.
 It is therefore a candidate for producing first shape models early in a rendezvous, provided that unconstrained polar
-regions are flagged. The scale can be taken from the trajectory, which in our data was accurate to about 1\% in length
-and 3\% in volume. At high phase angles, the night side must be treated explicitly, and views from higher latitudes,
+regions are flagged. The scale can be taken from the trajectory, which in our data was accurate to about 1\% in length and 3.4\% in volume. At high phase angles, the night side must be treated explicitly, and views from higher latitudes,
 which none of our image sets provides, would be needed to constrain the polar regions.
 
 %--------------------------------------------------------------------
@@ -892,15 +883,13 @@ albedo that is shaded by a lunar-Lambert function under the Sun direction of eac
 silhouette loss from removing the unlit part of the body, and a phase switch adds cast shadows or an albedo prior.
 
 On Itokawa and Ryugu, the mean distance of \pcgs\ to the mission shape models is 0.59 and 0.62~m, 37\% and 15\% lower
-than that of the most accurate of four Gaussian splatting methods on each body. Against the laser-altimeter model of
-Bennu, which is independent of images, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds
-3.7~m. Most of this difference arises from the treatment of the night side: the night-side band is essential at high
-phase angle and has little effect at low phase angle. Within \pcgs, removing the photometric rendering increases the mean distance by 48\% on
+than that of the most accurate of four Gaussian splatting methods on each body. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds
+3.7~m. Most of this difference arises from the treatment of the night side: the night-side band is essential at high phase angle and has little effect on the mean distance at low phase angle. Within \pcgs, removing the shading together with the phase switch increases the mean distance by 48\% on
 Itokawa and by 14\% on Ryugu. The phase switch improves the models of Itokawa, of
 Ryugu at 19$^\circ$, and of Bennu, but not those of Ryugu at 7$^\circ$ and 40$^\circ$. At the scale of the reference
 models, the volumes agree to within 0.3\%; at the trajectory scale, to within 3.4\%. The fitted lunar-Lambert parameter
-of Ryugu decreases with increasing phase angle, from 0.78 at 7$^\circ$ to 0.37 at 40$^\circ$. With about 30~min of
-training on a single GPU, \pcgs\ is a candidate for producing first shape models early in a rendezvous.
+of Ryugu decreases with increasing phase angle, from 0.78 at 7$^\circ$ to 0.37 at 40$^\circ$. Because it trains in about 30~min on a single GPU, \pcgs\ could provide shape models within the first days of a
+rendezvous.
 
 In future work, we plan to replace the phase switch by a photometric model fitted jointly across phase angles, to test
 the method on shorter image arcs and other bodies, and to apply it to the first images of upcoming missions such as Hera
