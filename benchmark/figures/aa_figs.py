@@ -530,7 +530,7 @@ def fig_night(d, A, out):
     head = 4.6 * mm
     H = head + 2 * ph + g + 1.0 * mm
     fig = plt.figure(figsize=(W, H), facecolor="white")
-    titles = [f"Bennu ({mt['image']['phase']:.0f}°): lit mask and night-side band", "Reference (OLA)", "PCGS without night-side band", "PCGS (this work)"]
+    titles = [f"Bennu ({mt['image']['phase']:.0f}°): foreground mask and night-side band", "Reference (OLA)", "PCGS without night-side band", "PCGS (this work)"]
     for j in range(4):
         ax = fig.add_axes([j * (pw + g) / W, (H - head - ph) / H, pw / W, ph / H])
         if j == 0:
@@ -540,7 +540,7 @@ def fig_night(d, A, out):
             nc_tile(ax, ov)
             ax.contour(lit.astype(float), [0.5], colors=["#F0E442"], linewidths=0.7)
             ax.contour(ref_a.astype(float), [0.5], colors=["white"], linewidths=0.7, linestyles="--")
-            ax.legend(handles=[Line2D([], [], color="#F0E442", lw=1, label="lit mask"),
+            ax.legend(handles=[Line2D([], [], color="#F0E442", lw=1, label="foreground mask"),
                                Patch(fc=(0.25, 0.55, 1.0), alpha=0.6, label="night-side band"),
                                Line2D([], [], color="white", lw=1, ls="--", label="body (reference)")],
                       loc="lower left", fontsize=5.3, frameon=True, facecolor="black", framealpha=0.65, edgecolor="none",
