@@ -57,7 +57,9 @@ terminator is excluded from the silhouette loss, cast shadows or an albedo prior
 angle, and watertight meshes are fused from depth maps that agree across views. We applied \pcgs\ to five image sets
 of Itokawa, Ryugu, and Bennu at phase angles of 7--60$^\circ$ and compared it with four Gaussian splatting methods.}
 {The mean distance to the mission shape models is 0.59~m for Itokawa and 0.62~m for Ryugu, 37\% and 15\% lower than
-that of the most accurate competing method. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, against more than 3.7~m for the other methods, mainly owing to the night-side band and the cast shadows. Replacing the shading with view-dependent colour increases the mean distance by 30\% on Itokawa and 6\% on Ryugu. Volumes agree with the reference models to within 0.3\% at the reference scale and 3.4\% at the trajectory scale.}
+that of the most accurate competing method. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, against more than 3.7~m for the other methods. Replacing the shading with view-dependent colour increases the mean
+distance by 30\% on Itokawa and 6\% on Ryugu and to 4.7~m on Bennu, as does removing the
+night-side band. Volumes agree with the reference models to within 0.3\% at the reference scale and 3.4\% at the trajectory scale.}
 {Photometric rendering, combined with a night-side band and consistency-filtered depth fusion, yields watertight
 global shape models with sub-metre mean distances from about 50 images and 30~min of training on a single GPU.}
 
@@ -440,7 +442,7 @@ scenes. All methods received the same images, poses, and splits, and the same ob
 99th-percentile radius of the SfM tie points. None of the baselines uses a silhouette loss: 2DGS and PGSR use the foreground masks only to discard
 background depth before fusion, and GOF and Asteroid-GS were run without masks. Asteroid-GS was also evaluated with the scene extent that its
 released code derives from the camera positions, a variant denoted Asteroid-GS$^\dagger$. The baselines were run on Itokawa, Ryugu at 19$^\circ$, and Bennu (GOF not on Bennu, because of its memory
-requirement), and some of them also at 7$^\circ$ and 40$^\circ$ (Sect.~\ref{sec:phase}). As a reference for image fidelity alone, we also trained
+requirement), and PGSR and Asteroid-GS also at 7$^\circ$ and 40$^\circ$ (Sect.~\ref{sec:phase}). As a reference for image fidelity alone, we also trained
 Mip-Splatting \citep{Yu2024Mip} on one split of Itokawa and fused a mesh from its rendered depth.
 
 All runs used a single NVIDIA A100 GPU on a shared node, so the run times are indicative. Training \pcgs\ took
@@ -615,19 +617,18 @@ the training images resolve it at up to 2.6~m per pixel. The global maps show th
 (Fig.~\ref{fig:maps}g--i): PGSR and Asteroid-GS miss large parts of the body, with mean completeness distances of 5.7 and
 5.2~m, whereas the errors of \pcgs, with a mean of 0.69~m, are concentrated in a narrow band along one meridian.
 
-Most of the difference from the baselines results from the treatment of the night side. Without the night-side band,
+The difference from the baselines results from both the night-side band and the photometric model. Without the band,
 the mean distance of \pcgs\ on the first split is 4.18~m, larger than that of PGSR and Asteroid-GS$^\dagger$ on the
-same split, 4.06 and 2.85~m (Table~\ref{tab:phase}). Cast shadows are also needed: with the band but without them,
-the mean distance is 2.44~m (Sect.~\ref{sec:rule}). Figure~\ref{fig:night} illustrates the mechanism. In a test image at a
+same split, 4.06 and 2.85~m (Table~\ref{tab:phase}). With the band but with view-dependent colour instead of the
+shading, it is 4.72~m, and without the cast shadows, 2.44~m (Sect.~\ref{sec:ablation}). Figure~\ref{fig:night} illustrates the mechanism. In a test image at a
 phase angle of 45$^\circ$, the outline of the reference model extends well beyond the foreground mask into the
 night-side band (Fig.~\ref{fig:night}a). Without the band, the silhouette loss treats this region as empty space: the
 surface is removed where the body is dark in most training views and bulges outwards elsewhere, and 16\% of the vertices
 lie more than 6~m from the reference (Fig.~\ref{fig:night}b,d). With the band, this fraction falls to 1\%, and the
 signed distance is centred on zero. The baselines use no silhouette loss, but in each training image the unlit part of the
 body is as dark as the sky, so the image loss cannot distinguish unlit surface from empty space there, and their meshes
-show removed and displaced regions as well (Fig.~\ref{fig:recon}l). The comparison on Bennu therefore shows mainly that the night side
-must be treated explicitly at high phase angle; it does not isolate the contribution of the photometric model, which is
-quantified in Sect.~\ref{sec:ablation}.
+show removed and displaced regions as well (Fig.~\ref{fig:recon}l). At high phase angle, the night side must therefore be treated explicitly, and the brightness of the lit surface,
+including its cast shadows, must be modelled rather than absorbed by a free appearance model.
 
 \begin{figure*}
 \centering
@@ -749,8 +750,8 @@ constrains the geometry less. Since this variant also loses the phase switch, th
 compared without it: the shading then lowers the mean distance from 0.78 to 0.68~m on Itokawa but only from 0.65 to
 0.64~m on Ryugu. With view-dependent colour, \pcgs\ is still more accurate than the most accurate baseline on the same
 split, PGSR, with 0.90~m on Itokawa and 0.72~m on Ryugu. The photometric model and the phase switch therefore account
-for about 60\% of the margin over PGSR on Itokawa and for about a third on Ryugu, and the other components of the
-pipeline for the rest.
+for about 60\% of the margin over PGSR on Itokawa and for about a third on Ryugu, and the other components of the pipeline for the rest. On Bennu, the view-dependent colour
+fails even with the night-side band, with a mean distance of 4.72~m, larger than that of PGSR on the same split.
 
 \subsubsection{Effects of multi-view consistency and the silhouette loss}
 
@@ -784,7 +785,9 @@ one or two splits. Using both the albedo prior and cast shadows is worse than us
 image set lies between 10.4$^\circ$ and 18.5$^\circ$, the data constrain the threshold only to this interval. In the leave-one-out ablation, which includes the night-side band, removing the phase switch increases
 the mean distance from 0.60 to 0.68~m on Itokawa and from 0.62 to 0.64~m on Ryugu at 19$^\circ$, and the RMSE on
 Itokawa from 1.07 to 2.47~m. On Bennu, cast shadows are essential even with the band: without them, the mean distance increases from
-0.59 to 2.44~m and the RMSE from 1.21 to 7.63~m.
+0.59 to 2.44~m and the RMSE from 1.21 to 7.63~m. With the band, cast shadows also reduce the mean distance at 40$^\circ$, slightly, from 0.68 to 0.66~m,
+and the RMSE from 1.02 to 0.95~m, whereas at 7$^\circ$ the albedo prior slightly increases the mean distance, from 0.74
+to 0.75~m.
 
 \input{tables/priors}
 
@@ -843,8 +846,9 @@ image sets with narrow baselines, many regions are smooth or seen from few direc
 under several Sun directions constrains the orientation of the surface, much as the brightness constrains the slopes
 between stereo control points in SPC \citep{Gaskell2008}. The ablation supports this picture: without the shading and the phase switch, the mean distance increases by 48\%
 on Itokawa and by 14\% on Ryugu (Sect.~\ref{sec:abl_photo}). With the view-dependent colour of Gaussian splatting in place of the
-shading, the mean distance increases by 30\% on Itokawa but only by 6\% on Ryugu, where the other components of the
-pipeline account for most of the margin over the baselines. The larger effect on Itokawa
+shading, the mean distance increases by 30\% on Itokawa but only by 6\% on Ryugu, where the other components of the pipeline account for most of the margin over the baselines. On
+Bennu, observed at 26--60$^\circ$, the view-dependent colour fails altogether (4.72~m), so the photometric model
+becomes indispensable at high phase angle. The larger effect on Itokawa
 is consistent with its smooth Muses-C region, but the two bodies also differ in pixel scale and in their reference
 models, so the comparison cannot establish this cause. The separation of albedo and shading is also incomplete. In the
 decomposition of Fig.~\ref{fig:overview}c, the rendered albedo retains dark patches next to boulders, indicating that part of the shading and of the short shadows at the boulder scale is absorbed by the albedo. The photometric
@@ -860,7 +864,8 @@ the poles of Ryugu \citep{ChenH2025}, so the differences between methods at high
 should be interpreted with caution. The method was developed on the Itokawa and 19$^\circ$ Ryugu image sets; the
 40$^\circ$ Ryugu set informed the choice of the phase threshold, and a preliminary reconstruction of Bennu motivated the
 night-side band. Only the 7$^\circ$ Ryugu set played no part in the development, and on it, \pcgs\ has its largest mean
-distance, 0.75~m.
+distance, 0.75~m. On this image set, \pcgs\ still has a lower mean distance and RMSE than PGSR and Asteroid-GS, whose mean
+distances are 0.84 and 1.45~m, but PGSR reaches a slightly higher F-score at 1~m (0.730 against 0.712).
 
 The scale of every reconstruction is fixed by the registration to the reference. At the trajectory scale, the volume errors range from $-3.4$\% on Itokawa to $+1.0$\% on Ryugu at 40$^\circ$ (Table~\ref{tab:volume}), and a bulk density
 derived from a first shape model would inherit this uncertainty. Regions that no image constrains, such as the poles of
@@ -898,13 +903,14 @@ than that of the most accurate of four Gaussian splatting methods on each body. 
 Bennu, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds 3.7~m. At the scale of the
 reference models, the volumes agree to within 0.3\%; at the trajectory scale, they agree to within 3.4\%.
 
-The ablation identifies the source of these gains. At high phase angle, the night-side band and the cast shadows are both essential: on
-Bennu, the mean distance increases to 4.18~m without the band and to 2.44~m without the shadows. At low phase angle,
+The ablation identifies the source of these gains. At high phase angle, the night-side band and the photometric model are both essential: on
+Bennu, the mean distance increases to 4.18~m without the band, to 2.44~m without the cast shadows, and to 4.72~m with
+view-dependent colour instead of the shading. At low phase angle,
 the band has little effect on the mean distance. Replacing the
 shading by the view-dependent colour of Gaussian splatting increases the mean distance by 30\% on Itokawa and by 6\% on
 Ryugu, although it improves the fit to the test images; the known illumination thus constrains the geometry in a way
-that a free appearance model does not. The phase switch improves the models of Itokawa, of Ryugu at 19$^\circ$, and of
-Bennu, but not those of Ryugu at 7$^\circ$ and 40$^\circ$, and the fitted lunar-Lambert parameter of Ryugu decreases
+that a free appearance model does not. With the band, the phase switch improves the models on all image sets except Ryugu at 7$^\circ$, where the albedo prior
+brings no benefit, and the fitted lunar-Lambert parameter of Ryugu decreases
 from 0.78 at 7$^\circ$ to 0.37 at 40$^\circ$.
 
 Because it trains in about 30~min on a single GPU, \pcgs\ could provide shape models within the first days of a
