@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<!--
+  PCGS project page (GitHub Pages: serve docs/ of this repository; not enabled yet).
+  Layout after the Nerfies academic project page template (Bulma), see the footer.
+  Figures are the manuscript figures (results/figures/aa of the research repository); the turntable
+  videos are rendered from the split-0 meshes (scripts in the research repository).
+  To update on publication: the Paper and arXiv buttons, the BibTeX entry.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PCGS: Photometrically Constrained Gaussian Splatting</title>
+  <meta name="description" content="PCGS reconstructs closed, sub-metre global shape models of asteroids from a few dozen spacecraft images by constraining Gaussian splatting with the known solar illumination.">
+  <meta name="author" content="Xin-Yu Xiao, Fei He">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1.9.4/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23c0392b'/%3E%3Cpath d='M14 38c6-14 22-22 36-18-4 4-6 10-4 16-10-4-22-2-32 2z' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">
+            <span class="pcgs-name">PCGS</span>: Photometrically Constrained Gaussian Splatting<br>
+            for Sparse-View Asteroid Shape Reconstruction
+          </h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Xin-Yu Xiao<sup>1,2</sup>,</span>&nbsp;
+            <span class="author-block">Fei He<sup>1,2</sup></span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Institute of Geology and Geophysics, Chinese Academy of Sciences&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="author-block"><sup>2</sup>University of Chinese Academy of Sciences</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled title="Coming soon">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled title="Coming soon">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/Xin-YuXiao/AsteroidModeling" target="_blank" rel="noopener noreferrer"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#data" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-database"></i></span><span>Data</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#BibTeX" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-quote-left"></i></span><span>BibTeX</span>
+                </a>
+              </span>
+            </div>
+          </div>
+          <div class="publication-venue-line">
+            <b>Submitted to <i>Astronomy &amp; Astrophysics</i></b>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop has-text-justified is-size-5">
+    <div class="hero-body">
+      <img src="static/images/teaser.jpg" alt="Held-out spacecraft images of Itokawa, Ryugu and Bennu next to the reference shape models and the reconstructions of PCGS, PGSR and Asteroid-GS, rendered from the held-out camera." width="100%">
+      <p class="teaser-text">
+        <strong>PCGS builds the known Sun into Gaussian splatting.</strong> Every surfel carries an albedo that is lit
+        by the Sun of each spacecraft image, so that image brightness constrains the shape, and the unlit night side is
+        no longer carved away. From about 50 images, PCGS reconstructs closed global shape models of Itokawa, Ryugu
+        and Bennu with mean errors of 0.59&ndash;0.62&nbsp;m after about half an hour of training on one GPU,
+        15&ndash;84% lower than the best competing Gaussian splatting method.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            A first global shape model of a small body is often needed early in a rendezvous, when only a few dozen
+            images are available. Gaussian splatting reconstructs surfaces from such image sets within tens of minutes,
+            but it treats brightness as a free, view-dependent colour and ignores the solar illumination, which is known
+            for every image.
+          </p>
+          <p>
+            <b>Photometrically constrained Gaussian splatting (PCGS)</b> renders each image from view-independent surfel
+            albedos shaded by a lunar-Lambert function under the Sun direction of that image and, at phase angles of
+            15&deg; and above, attenuated by cast shadows computed from the Sun's viewpoint; at lower phase angles a
+            total-variation prior on the albedo separates albedo from shading. The silhouette loss ignores a band beyond
+            the terminator in which the unlit body may lie, and closed meshes are fused from depth that agrees between
+            views. We applied PCGS to five image sets of Itokawa, Ryugu and Bennu at phase angles of 7&ndash;60&deg;,
+            each with 40&ndash;50 training images, and compared it with four Gaussian splatting methods under identical
+            inputs.
+          </p>
+          <p>
+            The mean distance of PCGS to the mission shape models is 0.59&nbsp;m on Itokawa and 0.62&nbsp;m on Ryugu,
+            37% and 15% lower than that of the best competing method, and the registered volumes agree with the
+            references to within 0.3%. Against the laser-altimeter shape model of Bennu, the mean distance is
+            0.62&nbsp;&plusmn;&nbsp;0.06&nbsp;m, compared with more than 3.7&nbsp;m for the other methods; most of this
+            difference is due to the treatment of the night side. The learned lunar-Lambert parameter decreases with
+            phase angle, and on Itokawa and Ryugu the method that best reproduces held-out images does not produce the
+            most accurate shape.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Method</h2>
+        <div class="content has-text-justified">
+          <center><img src="static/images/overview.jpg" alt="Overview of PCGS: the Ryugu cameras and Sun direction, the pipeline from spacecraft images to surfels, photometric rendering and a closed mesh, and a held-out image decomposed into rendered image, albedo, shading, normals and residual." width="100%"></center>
+          <p>
+            <b>Rendering under the known Sun.</b> The rendered albedo <i>A</i> is shaded by the lunar-Lambert function
+            &Phi;(&mu;<sub>0</sub>,&nbsp;&mu;) of the rendered normal and the SPICE Sun direction of each image, and
+            multiplied by a cast-shadow factor <i>V</i> from a Sun-view depth map: &Icirc; = <i>A</i>&nbsp;&Phi;&nbsp;<i>V</i>.
+            A brightness difference between two views of the same surface element must then be explained by its
+            orientation, not by a change of colour.
+          </p>
+          <p>
+            <b>Regularisation that follows the illumination.</b> Below 15&deg; phase the shading contrast is weak, and a
+            total-variation prior assigns brightness variations to the geometry rather than to the albedo; at and above
+            15&deg; cast shadows are rendered. A band behind the lit limb, as wide as the night side at the phase angle of
+            the image, is excluded from the silhouette loss, so the unlit body is not carved away.
+          </p>
+          <p>
+            <b>Reference-free extraction.</b> Depth is kept only where at least three other views agree, meshed by
+            screened Poisson reconstruction, regions that no view supports are faired, and the mesh is offset to the
+            structure-from-motion tie points. No step uses a reference model.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h2 class="title is-3">Reconstructions</h2>
+      <p class="subtitle is-6 video-note">Split-0 meshes turning about the spin axis: reference shape model (left) and PCGS (right).</p>
+      <div class="columns is-centered video-grid">
+        <div class="column">
+          <video autoplay muted loop playsinline width="100%"><source src="static/videos/itokawa.mp4" type="video/mp4"></video>
+          <p class="video-label">Itokawa &middot; Hayabusa AMICA, 10&deg;</p>
+        </div>
+        <div class="column">
+          <video autoplay muted loop playsinline width="100%"><source src="static/videos/ryugu.mp4" type="video/mp4"></video>
+          <p class="video-label">Ryugu &middot; Hayabusa2 ONC-T, 19&deg;</p>
+        </div>
+        <div class="column">
+          <video autoplay muted loop playsinline width="100%"><source src="static/videos/bennu.mp4" type="video/mp4"></video>
+          <p class="video-label">Bennu &middot; OSIRIS-REx MapCam, 26&ndash;60&deg;</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Shape Accuracy</h2>
+        <div class="content has-text-justified">
+          <div class="table-container">
+            <table class="table is-narrow is-hoverable is-fullwidth results-table">
+              <thead>
+                <tr>
+                  <th rowspan="2">Method</th>
+                  <th colspan="3" class="has-text-centered">Itokawa (AMICA, 10&deg;)</th>
+                  <th colspan="3" class="has-text-centered">Ryugu (ONC-T, 19&deg;)</th>
+                  <th colspan="3" class="has-text-centered">Bennu (MapCam, 26&ndash;60&deg;)</th>
+                </tr>
+                <tr>
+                  <th>Mean&nbsp;&darr;</th><th>RMSE&nbsp;&darr;</th><th>F@1m&nbsp;&uarr;</th>
+                  <th>Mean&nbsp;&darr;</th><th>RMSE&nbsp;&darr;</th><th>F@1m&nbsp;&uarr;</th>
+                  <th>Mean&nbsp;&darr;</th><th>RMSE&nbsp;&darr;</th><th>F@1m&nbsp;&uarr;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>2DGS</td><td>6.55</td><td>17.96</td><td>0.546</td><td>2.50</td><td>3.80</td><td>0.416</td><td>26.77</td><td>41.64</td><td>0.138</td></tr>
+                <tr><td>GOF</td><td>2.40</td><td>4.66</td><td>0.362</td><td>4.20</td><td>5.98</td><td>0.162</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>PGSR</td><td>0.99</td><td>2.83</td><td><u>0.812</u></td><td><u>0.73</u></td><td><u>1.18</u></td><td><u>0.787</u></td><td><u>3.78</u></td><td>11.26</td><td><u>0.689</u></td></tr>
+                <tr><td>Asteroid-GS</td><td>1.01</td><td>2.10</td><td>0.649</td><td>1.27</td><td>1.88</td><td>0.525</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>Asteroid-GS<sup>&dagger;</sup></td><td><u>0.94</u></td><td><u>1.82</u></td><td>0.658</td><td>1.29</td><td>1.98</td><td>0.530</td><td><u>3.78</u></td><td><u>8.69</u></td><td>0.368</td></tr>
+                <tr class="ours"><td><b>PCGS (ours)</b></td><td><b>0.59</b></td><td><b>1.02</b></td><td><b>0.853</b></td><td><b>0.62</b></td><td><b>0.89</b></td><td><b>0.798</b></td><td><b>0.62</b></td><td><b>1.34</b></td><td><b>0.812</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">
+            Mean over three random splits (about 50 training and 10 held-out images). Mean and RMSE in metres, from the
+            mesh vertices to the reference surface; F@1m: F-score at 1&nbsp;m. References: Itokawa,
+            stereophotoclinometry model; Ryugu, structure-from-motion model; Bennu, laser-altimeter (OLA) model, which is
+            independent of images. All methods use the same images, cameras, masks and post-processing.
+            <b>Best</b> in bold, <u>second best</u> underlined. Asteroid-GS uses the object extent of the other methods;
+            <sup>&dagger;</sup>with the scene extent of its public code, the only variant run on Bennu. GOF exceeded the
+            GPU memory on Bennu.
+          </p>
+          <center><img src="static/images/numbers.jpg" alt="Mean distance, RMSE, F-score, normal error and held-out PSNR of every method on Itokawa, Ryugu and Bennu." width="100%"></center>
+          <p>
+            <b>Every metric, every split.</b> Bars give the mean over three splits and dots the individual splits. On
+            Bennu, PCGS without the night-side band (light bar) performs like the baselines: the gain there comes from
+            treating the unlit night side with the known illumination geometry.
+          </p>
+          <center><img src="static/images/reconstruction.jpg" alt="Reconstructions of Itokawa, Ryugu and Bennu from a held-out camera, zoomed windows, distributions of the signed distance to the reference, and maps of the signed distance on the surface." width="100%"></center>
+          <p>
+            <b>Where the error lies.</b> Reconstructions seen from a held-out camera, a zoomed window placed where the
+            reference has the most relief, and the signed distance to the reference. PCGS keeps the shapes of individual
+            boulders and shows small, unbiased errors; on Bennu, PGSR leaves holes and Asteroid-GS pulls a large part of
+            the surface inwards.
+          </p>
+          <center><img src="static/images/maps.jpg" alt="Completeness distance on the whole surface of Itokawa, Ryugu and Bennu for PCGS, PGSR and Asteroid-GS, in Mollweide projections." width="100%"></center>
+          <p>
+            <b>The whole surface.</b> Distance from the reference surface to each reconstruction, mapped over the body in
+            the body-fixed frame. On Bennu, PGSR and Asteroid-GS miss large parts of the body; the errors of PCGS stay
+            small almost everywhere.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">The Night Side</h2>
+        <div class="content has-text-justified">
+          <center><img src="static/images/night.jpg" alt="A Bennu image with the lit mask, the night-side band and the outline of the reference; PCGS without and with the band, and their errors." width="100%"></center>
+          <p>
+            At high phase angle a large part of the body lies beyond the terminator and is dark in every image, so a mask
+            derived from the image no longer outlines the body (yellow: lit mask; white: the body from the laser-altimeter
+            model). A silhouette loss on such masks carves the body away. PCGS knows the Sun direction and excludes a band
+            as wide as the night crescent from the silhouette loss: on Bennu, the share of vertices farther than 6&nbsp;m
+            from the reference drops from 16% to 1%.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">One Body, Three Illumination Geometries</h2>
+        <div class="content has-text-justified">
+          <center><img src="static/images/ryugu_phase.jpg" alt="Ryugu reconstructed by PCGS from campaigns at 7, 19 and 40 degrees phase, and by Asteroid-GS at 40 degrees, from the same camera, with zoomed windows and error maps." width="100%"></center>
+          <p>
+            Ryugu reconstructed independently from three campaigns, months apart, at phase angles of 7&deg;, 19&deg; and
+            40&deg;, seen from the same camera. The three PCGS models are nearly identical down to the large boulders, with
+            mean errors of 0.75, 0.62 and 0.66&nbsp;m; Asteroid-GS on the 40&deg; images reaches 1.25&nbsp;m.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">From 7&deg; to 60&deg; Phase Angle</h2>
+        <div class="content has-text-justified">
+          <center><img src="static/images/priors.jpg" alt="One held-out image per campaign ordered by phase angle, the effect of the phase-dependent prior on every campaign and split, and signed-distance maps without and with the prior." width="100%"></center>
+          <p>
+            Ryugu was imaged at 7&deg;, 19&deg; and 40&deg; phase, which shows the same body under three illumination
+            geometries; Itokawa (10&deg;) and Bennu (26&ndash;60&deg;) extend the range. An albedo total-variation prior
+            helps where the shading is weak (Itokawa), cast shadows help where they are frequent (Bennu), and PCGS stays
+            between 0.59 and 0.75&nbsp;m mean distance on every campaign.
+          </p>
+          <div class="columns is-vcentered">
+            <div class="column is-half">
+              <img src="static/images/lambert.jpg" alt="The learned lunar-Lambert partition parameter against the phase angle." width="100%">
+            </div>
+            <div class="column is-half">
+              <p>
+                <b>The learned photometric parameter behaves physically.</b> The lunar-Lambert partition parameter
+                <i>L</i> is fitted only to make the shape consistent with the images. It is reproducible between splits
+                and decreases with phase angle, from 0.78 at 7&deg; to 0.37 at 40&deg; on Ryugu and to about 0.1 on Bennu,
+                the behaviour known for regolith-covered surfaces: the shading is explained by the geometry.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Image Fidelity Is Not Shape Accuracy</h2>
+        <div class="content has-text-justified">
+          <center><img src="static/images/heldout.jpg" alt="A held-out Ryugu image and the renders of PCGS, PGSR and Asteroid-GS, a zoomed window, the PSNR of every held-out image, and residual maps." width="100%"></center>
+          <p>
+            PGSR reproduces held-out images best, but its shapes are less accurate, and GOF reaches 38&nbsp;dB on Itokawa
+            with a mean shape error of 2.4&nbsp;m. PCGS has no appearance freedom to fit residual brightness and renders
+            no cast shadows in held-out views, so its renders trail in PSNR while its shapes are the most accurate.
+            Comparisons of methods for shape modelling should rest on shape metrics.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="data">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Data and Code</h2>
+        <div class="content has-text-justified">
+          <p>
+            All inputs are public mission data. The repository downloads them, rebuilds the scenes (SPICE geometry,
+            bundle adjustment from the SPICE poses, body masks, splits) and lists the frames and splits used in the
+            paper; no data are redistributed.
+          </p>
+          <div class="table-container">
+            <table class="table is-narrow is-fullwidth data-table">
+              <thead><tr><th>Image set</th><th>Camera</th><th>Dates</th><th>Images</th><th>Phase</th><th>Reference</th><th>Source</th></tr></thead>
+              <tbody>
+                <tr><td>Ryugu</td><td>Hayabusa2 ONC-T</td><td>2019 Jan 15</td><td>60</td><td>7.1&ndash;7.3&deg;</td><td>SfM-MVS</td><td><a href="https://data.darts.isas.jaxa.jp/pub/hayabusa2/">DARTS</a></td></tr>
+                <tr><td>Itokawa</td><td>Hayabusa AMICA</td><td>2005 Sep 29 &ndash; Oct 2</td><td>60</td><td>9.3&ndash;10.4&deg;</td><td>SPC</td><td><a href="https://data.darts.isas.jaxa.jp/pub/hayabusa/">DARTS</a></td></tr>
+                <tr><td>Ryugu</td><td>Hayabusa2 ONC-T</td><td>2018 Jul 10</td><td>60</td><td>18.5&ndash;18.7&deg;</td><td>SfM-MVS</td><td><a href="https://data.darts.isas.jaxa.jp/pub/hayabusa2/">DARTS</a></td></tr>
+                <tr><td>Ryugu</td><td>Hayabusa2 ONC-T</td><td>2018 Aug 31</td><td>48</td><td>39.9&ndash;40.3&deg;</td><td>SfM-MVS</td><td><a href="https://data.darts.isas.jaxa.jp/pub/hayabusa2/">DARTS</a></td></tr>
+                <tr><td>Bennu</td><td>OSIRIS-REx MapCam</td><td>2018 Nov 30 &ndash; Dec 13</td><td>60</td><td>26.1&ndash;59.9&deg;</td><td>OLA laser altimetry</td><td><a href="https://sbib.psi.edu/">PDS SBN</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+<pre class="code-snippet"><code>git clone --recursive https://github.com/Xin-YuXiao/AsteroidModeling.git &amp;&amp; cd AsteroidModeling
+bash scripts/prepare_data.sh ryugu_19deg       # download, SPICE geometry, bundle adjustment, splits
+bash scripts/run_campaign.sh ryugu_19deg 0 0   # train, extract the mesh, evaluate (split 0, GPU 0)</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{xiao2026pcgs,
+  title   = {{PCGS}: Photometrically constrained {G}aussian splatting for sparse-view
+             asteroid shape reconstruction},
+  author  = {Xiao, Xin-Yu and He, Fei},
+  journal = {Astronomy \&amp; Astrophysics},
+  year    = {2026},
+  note    = {submitted}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            Image credits: Hayabusa AMICA, JAXA/ISAS; Hayabusa2 ONC, JAXA, University of Tokyo, Kochi University, Rikkyo
+            University, Nagoya University, Chiba Institute of Technology, Meiji University, University of Aizu and AIST;
+            OSIRIS-REx MapCam, NASA/Goddard/University of Arizona. Shape models: Itokawa, R. W. Gaskell; Ryugu,
+            S. Watanabe et al.; Bennu, OSIRIS-REx Laser Altimeter team (NASA/University of Arizona/CSA/York University/MDA).
+          </p>
+          <p>
+            We thank JAXA (DARTS) for the Hayabusa and Hayabusa2 data, NASA's Planetary Data System for the OSIRIS-REx
+            data, NAIF for SPICE, and the authors of the reference shape models, of
+            <a href="https://github.com/hbb1/2d-gaussian-splatting">2DGS</a>, GOF, <a href="https://github.com/zju3dv/PGSR">PGSR</a>
+            and <a href="https://github.com/zhangxiaojie1243fei-crypto/Asteroid-GS">Asteroid-GS</a> for their code.
+            Contact: <a href="mailto:xiaoxinyu24@mails.ucas.ac.cn">xiaoxinyu24@mails.ucas.ac.cn</a>.
+          </p>
+          <p>
+            Website layout adapted from the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> project
+            page template, licensed under
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

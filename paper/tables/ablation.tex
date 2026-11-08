@@ -1,0 +1,25 @@
+\begin{table}[t]
+\centering
+\caption{Leave-one-out ablation. First split; one component removed at a time.}
+\label{tab:ablation}
+\footnotesize
+\setlength{\tabcolsep}{3.0pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Method & Mean (m) $\downarrow$ & RMSE (m) $\downarrow$ & F@1 m $\uparrow$ & Normal (\textdegree{}) $\downarrow$ \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Itokawa, 10\textdegree{}}} \\
+\textbf{PCGS (full model)} & 0.60 & 1.07 & 0.849 & 14.8 \\
+w/o night-side band & 0.58 & 0.92 & 0.846 & 14.4 \\
+\addlinespace[3pt]
+\multicolumn{5}{@{}l}{\textit{Ryugu, 19\textdegree{}}} \\
+\textbf{PCGS (full model)} & 0.62 & 0.89 & 0.798 & 12.1 \\
+w/o night-side band & 0.62 & 0.90 & 0.791 & 11.9 \\
+\addlinespace[3pt]
+\multicolumn{5}{@{}l}{\textit{Ryugu, 40\textdegree{}}} \\
+\textbf{PCGS (full model)} & 0.66 & 0.95 & 0.757 & 12.8 \\
+w/o night-side band & 0.71 & 1.07 & 0.709 & 12.5 \\
+\bottomrule
+\end{tabular}
+\tablefoot{Without photometric rendering, the albedo is compared with the image directly, and the priors, which act on the shading, are also removed. Columns as in Table~\ref{tab:main}.}
+\end{table}

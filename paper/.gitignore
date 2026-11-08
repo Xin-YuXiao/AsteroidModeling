@@ -1,0 +1,8 @@
+# build products (compile with tectonic or pdflatex+bibtex)
+*.pdf
+*.log
+*.blg
+*.aux
+*.bbl
+*.out
+figs_light/

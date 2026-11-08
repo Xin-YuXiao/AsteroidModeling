@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use PCGS, please cite the paper below."
+title: "PCGS: Photometrically constrained Gaussian splatting for sparse-view asteroid shape reconstruction"
+type: software
+authors:
+  - family-names: Xiao
+    given-names: Xin-Yu
+    affiliation: "Institute of Geology and Geophysics, Chinese Academy of Sciences; University of Chinese Academy of Sciences"
+    email: xiaoxinyu24@mails.ucas.ac.cn
+  - family-names: He
+    given-names: Fei
+    affiliation: "Institute of Geology and Geophysics, Chinese Academy of Sciences; University of Chinese Academy of Sciences"
+repository-code: "https://github.com/Xin-YuXiao/AsteroidModeling"
+url: "https://xin-yuxiao.github.io/AsteroidModeling/"
+license-url: "https://github.com/Xin-YuXiao/AsteroidModeling/blob/main/LICENSE.md"
+keywords:
+  - asteroid shape modelling
+  - Gaussian splatting
+  - photoclinometry
+  - Itokawa
+  - Ryugu
+  - Bennu
+preferred-citation:
+  type: article
+  title: "PCGS: Photometrically constrained Gaussian splatting for sparse-view asteroid shape reconstruction"
+  authors:
+    - family-names: Xiao
+      given-names: Xin-Yu
+    - family-names: He
+      given-names: Fei
+  journal: "Astronomy & Astrophysics"
+  year: 2026
+  notes: "Submitted"

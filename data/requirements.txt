@@ -1,0 +1,14 @@
+# Data preparation (data/*.py, scripts/prepare_data.sh): SPICE geometry, image export, COLMAP
+# bundle adjustment, scene splits. Separate from the training environment (environment.yml) because
+# pycolmap and the CUDA 11.8 / torch 2.1 stack pin different numpy versions.
+#   conda create -n pcgs-data python=3.11 && conda activate pcgs-data && pip install -r data/requirements.txt
+# Versions used for the paper:
+pycolmap==4.2.1
+spiceypy==8.3.0
+astropy==8.0.2
+numpy==2.4.6
+scipy==1.17.1
+opencv-python-headless==5.0.0.93
+open3d==0.18.0
+trimesh==5.2.0
+rtree==1.4.1

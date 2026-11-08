@@ -1,0 +1,113 @@
+# Every run reported in the paper, with the flags it was run with. Format of benchmark/gpu_queue.sh:
+#   <method> <scene> <split> [variant|-] [training flags]
+# Run tags: see benchmark/README.md. The PCGS flags of the final model (pcgs-v18n) equal configs/*.sh.
+
+# Main comparison: Itokawa, Ryugu 19 deg, Bennu (three splits), and the other image sets
+pcgs itokawa 0 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs itokawa 1 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs itokawa 2 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+2dgs itokawa 0 dtu --depth_ratio 1 --lambda_dist 1000
+2dgs itokawa 1 dtu --depth_ratio 1 --lambda_dist 1000
+2dgs itokawa 2 dtu --depth_ratio 1 --lambda_dist 1000
+gof itokawa 0
+gof itokawa 1
+gof itokawa 2
+pgsr itokawa 0
+pgsr itokawa 1
+pgsr itokawa 2
+ags itokawa 0
+ags itokawa 1
+ags itokawa 2
+ags itokawa 0 camext
+ags itokawa 1 camext
+ags itokawa 2 camext
+mip itokawa 0
+pcgs ryugu_lp 0 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs ryugu 0 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs ryugu 1 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs ryugu 2 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+2dgs ryugu 0 dtu --depth_ratio 1 --lambda_dist 1000
+2dgs ryugu 1 dtu --depth_ratio 1 --lambda_dist 1000
+2dgs ryugu 2 dtu --depth_ratio 1 --lambda_dist 1000
+gof ryugu 0
+gof ryugu 1
+gof ryugu 2
+pgsr ryugu 0
+pgsr ryugu 1
+pgsr ryugu 2
+ags ryugu 0
+ags ryugu 1
+ags ryugu 2
+ags ryugu 0 camext
+ags ryugu 1 camext
+ags ryugu 2 camext
+pcgs ryugu_b2 0 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs ryugu_b2 1 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+ags ryugu_b2 0
+ags ryugu_b2 1
+pcgs bennu 0 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs bennu 1 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs bennu 2 v18n --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+2dgs bennu 0 dtu --depth_ratio 1 --lambda_dist 1000
+2dgs bennu 1 dtu --depth_ratio 1 --lambda_dist 1000
+2dgs bennu 2 dtu --depth_ratio 1 --lambda_dist 1000
+pgsr bennu 0
+pgsr bennu 1
+pgsr bennu 2
+ags bennu 0 camext
+ags bennu 1 camext
+ags bennu 2 camext
+pgsr ryugu_b2 0
+pgsr ryugu_lp 0
+ags ryugu_lp 0
+
+# PCGS without the night-side band and without priors (Sects. 4.2, 4.5)
+pcgs itokawa 0 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1
+pcgs itokawa 1 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs itokawa 2 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs itokawa 0 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs itokawa 1 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs itokawa 2 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs ryugu_lp 0 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu_lp 0 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs ryugu 0 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu 1 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu 2 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu 0 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs ryugu 1 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs ryugu 2 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs ryugu_b2 0 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu_b2 1 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu_b2 0 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+pcgs bennu 0 v18 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs bennu 0 v10 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax
+
+# Phase rule: one prior at a time, without the night-side band (Table A.3)
+pcgs itokawa 0 v14t --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1
+pcgs ryugu 0 v14t --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1
+pcgs ryugu 0 v15s --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu 0 v17 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu_b2 0 v15s --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu_b2 0 v17 --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+
+# Leave-one-out ablation of the final model, first split
+pcgs itokawa 0 v18n-noshade --depth_ratio 1 --lambda_mask 0.05 --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs ryugu 0 v18n-noshade --depth_ratio 1 --lambda_mask 0.05 --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs ryugu_b2 0 v18n-noshade --depth_ratio 1 --lambda_mask 0.05 --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs itokawa 0 v18n-nomv --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs ryugu 0 v18n-nomv --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs ryugu_b2 0 v18n-nomv --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --pixfix --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs itokawa 0 v18n-nomask --depth_ratio 1 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu 0 v18n-nomask --depth_ratio 1 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs ryugu_b2 0 v18n-nomask --depth_ratio 1 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15
+pcgs itokawa 0 v18n-nopix --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs ryugu 0 v18n-nopix --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --limb_halfmax --lambda_albedo_tv 0.1 --tv_max_phase 15 --cast_shadows --shadow_slope 1.0 --shadow_gate 0.9 --shadow_min_phase 15 --sil_night
+pcgs itokawa 0 v18n-noprior --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs ryugu 0 v18n-noprior --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs ryugu_b2 0 v18n-noprior --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs ryugu_lp 0 v18n-noprior --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs bennu 0 v18n-noprior --depth_ratio 1 --lambda_mask 0.05 --sun_shading --sh_degree 0 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs itokawa 0 v18n-sh3 --depth_ratio 1 --lambda_mask 0.05 --sh_degree 3 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs ryugu 0 v18n-sh3 --depth_ratio 1 --lambda_mask 0.05 --sh_degree 3 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs ryugu_b2 0 v18n-sh3 --depth_ratio 1 --lambda_mask 0.05 --sh_degree 3 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night
+pcgs bennu 0 v18n-sh3 --depth_ratio 1 --lambda_mask 0.05 --sh_degree 3 --lambda_mv 0.15 --mv_mode ncc --pixfix --limb_halfmax --sil_night

@@ -1,0 +1,119 @@
+/* PCGS project page, on Bulma 0.9.4; layout after the Nerfies template */
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.publication-title,
+.publication-authors,
+.teaser {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.publication-title {
+  margin-top: 0.5rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.25;
+  font-size: 2.15rem !important;
+}
+
+.pcgs-name {
+  background: linear-gradient(90deg, #a93226, #e67e22);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.publication-authors {
+  margin-bottom: 0.4rem;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.publication-links {
+  margin-top: 0.6rem;
+}
+
+.link-block a {
+  margin: 5px 2px;
+}
+
+.button[disabled] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.publication-venue-line {
+  font-size: 1.15rem;
+  color: #363636;
+}
+
+.teaser .hero-body {
+  padding-top: 0.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.teaser-text {
+  margin-top: 1rem;
+}
+
+.section .title.is-3,
+.hero .title.is-3 {
+  margin-bottom: 1.4rem;
+}
+
+.content img {
+  margin-bottom: 0.8rem;
+}
+
+.video-note {
+  color: #555;
+  margin-top: -0.6rem !important;
+}
+
+.video-grid video {
+  border-radius: 6px;
+  background: #000;
+}
+
+.video-label {
+  font-size: 0.9rem;
+  color: #444;
+  margin-top: 0.3rem;
+}
+
+.results-table th,
+.results-table td,
+.data-table th,
+.data-table td {
+  text-align: center !important;
+  vertical-align: middle;
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.results-table td:first-child,
+.results-table th:first-child,
+.data-table td:first-child {
+  text-align: left !important;
+}
+
+.results-table tr.ours {
+  background: #fdf2ec;
+}
+
+.table-note {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.code-snippet {
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.footer {
+  padding: 2.5rem 1.5rem 3rem;
+  font-size: 0.9rem;
+}

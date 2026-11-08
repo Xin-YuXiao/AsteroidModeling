@@ -1,0 +1,30 @@
+\begin{table*}[t]
+\centering
+\caption{Image metrics in full. Held-out images, mean $\pm$ s.d. over three splits.}
+\label{tab:images_full}
+\footnotesize
+\setlength{\tabcolsep}{4.0pt}
+\begin{tabular}{@{}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}l@{}}
+\toprule
+Method & \multicolumn{2}{c}{PSNR raw (dB) $\uparrow$} & \multicolumn{2}{c}{PSNR (dB) $\uparrow$} & \multicolumn{2}{c}{SSIM $\uparrow$} & \multicolumn{2}{c}{LPIPS $\downarrow$} \\
+\midrule
+\multicolumn{9}{@{}l}{\textit{Itokawa (AMICA, phase 10\textdegree{})}} \\
+2DGS & 33.1 & 1.1 & 33.6 & 1.0 & 0.968 & 0.005 & 0.109 & 0.011 \\
+GOF & 38.0 & 0.6 & 38.0 & 0.6 & 0.973 & 0.002 & 0.109 & 0.011 \\
+PGSR & \underline{39.2} & 0.8 & \underline{39.3} & 0.8 & \underline{0.982} & 0.001 & \textbf{0.096} & 0.008 \\
+Asteroid-GS & 16.7 & 0.8 & 29.6 & 0.9 & 0.926 & 0.010 & 0.144 & 0.009 \\
+Asteroid-GS$^{\dagger}$ & 17.0 & 0.9 & 29.5 & 0.5 & 0.943 & 0.004 & 0.138 & 0.011 \\
+Mip-Splatting$^{\ddagger}$ & \multicolumn{2}{c}{\textbf{42.5}} & \multicolumn{2}{c}{\textbf{42.6}} & \multicolumn{2}{c}{\textbf{0.985}} & \multicolumn{2}{c}{0.100} \\
+\textbf{PCGS (this work)} & 36.4 & 0.6 & 36.5 & 0.5 & 0.980 & 0.001 & \underline{0.098} & 0.008 \\
+\addlinespace[3pt]
+\multicolumn{9}{@{}l}{\textit{Ryugu (ONC-T, phase 19\textdegree{})}} \\
+2DGS & \underline{34.8} & 1.8 & \underline{34.9} & 1.8 & \underline{0.948} & 0.005 & \underline{0.225} & 0.001 \\
+GOF & 33.5 & 0.0 & 33.5 & 0.0 & 0.944 & 0.001 & \textbf{0.202} & 0.008 \\
+PGSR & \textbf{35.1} & 0.2 & \textbf{35.2} & 0.2 & 0.947 & 0.003 & 0.227 & 0.002 \\
+Asteroid-GS & 13.4 & 0.6 & 22.7 & 0.2 & 0.858 & 0.002 & 0.283 & 0.002 \\
+Asteroid-GS$^{\dagger}$ & 13.5 & 0.6 & 22.7 & 0.0 & 0.868 & 0.004 & 0.282 & 0.002 \\
+\textbf{PCGS (this work)} & 31.0 & 0.1 & 31.3 & 0.1 & \textbf{0.952} & 0.001 & \underline{0.225} & 0.002 \\
+\bottomrule
+\end{tabular}
+\tablefoot{PSNR raw: the renders as each method writes them. The other columns after one gain and offset per image, fitted over the body, for every method; methods with per-image appearance codes (Asteroid-GS, GOF) have none for a held-out image and render it at a canonical exposure. $^{\dagger}$Asteroid-GS with the scene extent of its public repository (camera ring); the other rows use the object extent, as all methods do. $^{\ddagger}$First split only. Bold: best; underlined: second best.}
+\end{table*}

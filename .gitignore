@@ -1,0 +1,67 @@
+# Data, trained models and outputs never go into git (scripts/prepare_data.sh, scripts/run_campaign.sh,
+# benchmark/run_job.sh write them)
+/datasets/
+/output/
+/results/
+/logs/
+/repos/
+/work/
+/backup/
+
+# data/ holds the preparation scripts and the paper's image lists; downloaded data stay local
+/data/*
+!/data/*.py
+!/data/*.sh
+!/data/requirements.txt
+!/data/lists/
+
+# machine-specific benchmark settings (template: benchmark/env.example.sh)
+/benchmark/env.local.sh
+
+# local material
+/data_local/
+/Ref Papers/
+/.zcode/
+/.claude/
+/server/
+
+# meshes, models, mission data and archives
+*.ply
+*.obj
+*.stl
+*.tri
+*.pth
+*.pt
+*.npz
+*.tgz
+*.tar.gz
+*.fits
+*.fit
+*.bsp
+*.bc
+*.bds
+*.tpc
+*.tls
+*.tsc
+*.db
+events.out.tfevents.*
+cfg_args
+*.bak*
+
+# Python and build products
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.ruff_cache/
+.pytest_cache/
+
+# editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# local reports kept next to the manuscript
+/paper/*.html

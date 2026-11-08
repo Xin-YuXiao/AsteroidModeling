@@ -1,0 +1,29 @@
+# CPU checks on every push that touches the code: lint of the PCGS code, byte-compilation, and the unit tests in tests/.
+# Training needs CUDA and the prepared scenes and is not run here (README, Reproducing the paper).
+name: checks
+on:
+  push:
+    paths-ignore: ["paper/**", "docs/**", "**.md"]
+  pull_request:
+    paths-ignore: ["paper/**", "docs/**", "**.md"]
+jobs:
+  cpu:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install CPU dependencies
+        run: |
+          pip install torch==2.1.2 --index-url https://download.pytorch.org/whl/cpu
+          pip install numpy==1.26.4 scipy==1.15.3 opencv-python-headless==4.11.0.86 trimesh==5.2.0 \
+                      open3d==0.18.0 matplotlib==3.10.9 pytest ruff==0.6.6
+      - name: Lint
+        run: ruff check pcgs extraction evaluation data scripts tests benchmark
+      - name: Byte-compile
+        run: python -m compileall -q train.py render.py arguments gaussian_renderer scene utils pcgs extraction evaluation data scripts benchmark
+      - name: Shell syntax
+        run: for f in scripts/*.sh data/*.sh configs/*.sh benchmark/*.sh benchmark/baselines/*.sh; do bash -n "$f"; done
+      - name: Unit tests
+        run: python -m pytest -q

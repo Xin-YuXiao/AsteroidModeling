@@ -1,0 +1,20 @@
+\begin{table*}[t]
+\centering
+\caption{Shape and image accuracy on Bennu against the laser-altimeter model. Mean $\pm$ standard deviation over three splits.}
+\label{tab:bennu}
+\footnotesize
+\setlength{\tabcolsep}{2.4pt}
+\begin{tabular}{@{}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}l@{}}
+\toprule
+ & \multicolumn{10}{c}{Shape against the OLA model} & \multicolumn{2}{c}{Images} \\
+\cmidrule(lr){2-11}\cmidrule(lr){12-13}
+Method & \multicolumn{2}{c}{Mean (m) $\downarrow$} & \multicolumn{2}{c}{RMSE (m) $\downarrow$} & \multicolumn{2}{c}{Chamfer (m) $\downarrow$} & \multicolumn{2}{c}{F@1 m $\uparrow$} & \multicolumn{2}{c}{Normal (\textdegree{}) $\downarrow$} & \multicolumn{2}{c}{PSNR (dB) $\uparrow$} \\
+\midrule
+2DGS & 26.77 & 1.59 & 41.64 & 2.69 & 26.85 & 0.33 & 0.138 & 0.023 & 53.3 & 0.8 & 20.1 & 0.6 \\
+PGSR & \underline{3.78} & 0.85 & 11.26 & 3.39 & \underline{3.84} & 0.81 & \underline{0.689} & 0.049 & 38.0 & 1.3 & \underline{20.3} & 0.3 \\
+Asteroid-GS$^{\dagger}$ & \underline{3.78} & 1.75 & \underline{8.69} & 5.00 & 5.94 & 3.47 & 0.368 & 0.035 & \underline{33.1} & 1.3 & 17.6 & 1.0 \\
+\textbf{PCGS (this work)} & \textbf{0.62} & 0.06 & \textbf{1.34} & 0.14 & \textbf{0.75} & 0.04 & \textbf{0.812} & 0.011 & \textbf{32.8} & 0.3 & \textbf{22.2} & 0.5 \\
+\bottomrule
+\end{tabular}
+\tablefoot{Distances in metres. Mean, RMSE: vertices of the reconstruction to the reference surface; Chamfer: mean of the two directed mean distances; F@1 m: F-score at 1 m; Normal: mean angle between corresponding normals; PSNR: held-out images after one gain and offset per image. Bold: best; underlined: second best. $^{\dagger}$Asteroid-GS with the scene extent of its public code (the other rows use the object extent). GOF exceeded the available GPU memory on Bennu.}
+\end{table*}

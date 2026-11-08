@@ -1,0 +1,31 @@
+\begin{table*}[t]
+\centering
+\caption{Shape and image accuracy on Itokawa and Ryugu. Mean $\pm$ standard deviation over three splits (50 training and 10 held-out images each).}
+\label{tab:main}
+\footnotesize
+\setlength{\tabcolsep}{2.4pt}
+\begin{tabular}{@{}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}l@{}}
+\toprule
+ & \multicolumn{10}{c}{Shape against the reference model} & \multicolumn{2}{c}{Images} \\
+\cmidrule(lr){2-11}\cmidrule(lr){12-13}
+Method & \multicolumn{2}{c}{Mean (m) $\downarrow$} & \multicolumn{2}{c}{RMSE (m) $\downarrow$} & \multicolumn{2}{c}{Chamfer (m) $\downarrow$} & \multicolumn{2}{c}{F@1 m $\uparrow$} & \multicolumn{2}{c}{Normal (\textdegree{}) $\downarrow$} & \multicolumn{2}{c}{PSNR (dB) $\uparrow$} \\
+\midrule
+\multicolumn{13}{@{}l}{\textit{Itokawa (AMICA, phase 10\textdegree{})}} \\
+2DGS & 6.55 & 3.41 & 17.96 & 11.62 & 4.63 & 1.92 & 0.546 & 0.035 & 24.1 & 2.4 & 33.6 & 1.0 \\
+GOF & 2.40 & 0.12 & 4.66 & 0.45 & 3.01 & 0.24 & 0.362 & 0.004 & 41.5 & 0.4 & \underline{38.0} & 0.6 \\
+PGSR & 0.99 & 0.07 & 2.83 & 0.46 & \underline{0.76} & 0.03 & \underline{0.812} & 0.001 & 14.3 & 0.1 & \textbf{39.3} & 0.8 \\
+Asteroid-GS & 1.01 & 0.10 & 2.10 & 0.41 & 1.76 & 0.55 & 0.649 & 0.031 & \underline{13.9} & 1.1 & 29.6 & 0.9 \\
+Asteroid-GS$^{\dagger}$ & \underline{0.94} & 0.03 & \underline{1.82} & 0.17 & 1.54 & 0.16 & 0.658 & 0.008 & \textbf{12.7} & 0.2 & 29.5 & 0.5 \\
+\textbf{PCGS (this work)} & \textbf{0.59} & 0.02 & \textbf{1.02} & 0.15 & \textbf{0.59} & 0.01 & \textbf{0.853} & 0.005 & 14.7 & 0.2 & 36.5 & 0.5 \\
+\addlinespace[3pt]
+\multicolumn{13}{@{}l}{\textit{Ryugu (ONC-T, phase 19\textdegree{})}} \\
+2DGS & 2.50 & 0.08 & 3.80 & 0.17 & 1.96 & 0.07 & 0.416 & 0.010 & 28.0 & 0.4 & \underline{34.9} & 1.8 \\
+GOF & 4.20 & 0.08 & 5.98 & 0.15 & 4.50 & 0.11 & 0.162 & 0.003 & 42.4 & 0.3 & 33.5 & 0.0 \\
+PGSR & \underline{0.73} & 0.01 & \underline{1.18} & 0.04 & \underline{0.76} & 0.01 & \underline{0.787} & 0.005 & 14.5 & 0.1 & \textbf{35.2} & 0.2 \\
+Asteroid-GS & 1.27 & 0.02 & 1.88 & 0.03 & 1.42 & 0.03 & 0.525 & 0.005 & \underline{11.4} & 0.0 & 22.7 & 0.2 \\
+Asteroid-GS$^{\dagger}$ & 1.29 & 0.01 & 1.98 & 0.02 & 1.52 & 0.02 & 0.530 & 0.004 & \textbf{11.3} & 0.0 & 22.7 & 0.0 \\
+\textbf{PCGS (this work)} & \textbf{0.62} & 0.00 & \textbf{0.89} & 0.01 & \textbf{0.73} & 0.00 & \textbf{0.798} & 0.000 & 12.1 & 0.0 & 31.3 & 0.1 \\
+\bottomrule
+\end{tabular}
+\tablefoot{Distances in metres. Mean, RMSE: vertices of the reconstruction to the reference surface; Chamfer: mean of the two directed mean distances; F@1 m: F-score at 1 m; Normal: mean angle between corresponding normals; PSNR: held-out images after one gain and offset per image. Bold: best; underlined: second best. $^{\dagger}$Asteroid-GS with the scene extent of its public code (the other rows use the object extent).}
+\end{table*}

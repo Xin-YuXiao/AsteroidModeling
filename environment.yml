@@ -1,0 +1,35 @@
+# Training, extraction and evaluation environment (the one used for the paper: Python 3.10,
+# PyTorch 2.1.2 + CUDA 11.8, NVIDIA A100). After creating it, build the two CUDA extensions:
+#   conda env create -f environment.yml && conda activate pcgs
+#   pip install --no-build-isolation submodules/diff-surfel-rasterization submodules/simple-knn
+# (needs the CUDA 11.8 toolkit: export CUDA_HOME=/usr/local/cuda-11.8). Data preparation uses a
+# separate environment, data/requirements.txt.
+name: pcgs
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch=2.1.2
+  - torchvision=0.16.2
+  - pytorch-cuda=11.8
+  - mkl=2023.1.0          # pytorch-channel 2.1 builds break with mkl >= 2024.1 (iJIT_NotifyEvent)
+  - pip
+  - pip:
+    - numpy==1.26.4
+    - scipy==1.15.3
+    - open3d==0.18.0
+    - trimesh==5.2.0
+    - rtree==1.4.1
+    - plyfile==1.1.3
+    - opencv-python-headless==4.11.0.86
+    - scikit-image==0.25.2
+    - lpips==0.1.4
+    - mediapy==1.2.7
+    - matplotlib==3.10.9
+    - tqdm==4.70.1
+    - ninja==1.13.2
+    - setuptools<70       # torch 2.1 cpp_extension imports pkg_resources
+    - wheel
