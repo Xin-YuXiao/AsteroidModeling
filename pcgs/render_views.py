@@ -1,6 +1,5 @@
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 """Render the held-out views of a trained PCGS model.
 
 If the model was trained with --sun_shading, each held-out view is rendered as the albedo map shaded by the

@@ -11,7 +11,7 @@ Submitted to *Astronomy & Astrophysics*
 
 [Project page](https://xin-yuxiao.github.io/AsteroidModeling/) &nbsp;|&nbsp; Paper (coming soon) &nbsp;|&nbsp; arXiv (coming soon) &nbsp;|&nbsp; Data and meshes (Zenodo, upon publication)
 
-![License](https://img.shields.io/badge/license-Gaussian--Splatting%20(non--commercial)-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.10-blue)
 ![PyTorch](https://img.shields.io/badge/pytorch-2.1.2-orange)
 ![CUDA](https://img.shields.io/badge/CUDA-11.8-green)
@@ -336,4 +336,6 @@ We thank JAXA, NASA and the mission teams for the public images and shape models
 
 ## License
 
-Non-commercial research use, under the Gaussian-Splatting License inherited from 2DGS ([`LICENSE.md`](LICENSE.md)).
+The PCGS code is released under the [MIT License](LICENSE). The files derived from 2D/3D Gaussian Splatting
+(`train.py`, `render.py`, `arguments/`, `gaussian_renderer/`, `scene/`, `utils/`) keep their non-commercial
+[Gaussian-Splatting License](LICENSE.md).

@@ -1,6 +1,5 @@
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 """Multi-view-consistent mesh extraction for a trained model (2DGS / PCGS).
 
 usage: python extraction/mvfuse.py -s <scene_split> -m <model_dir> [--min_agree 3] [--tol 0.0015]

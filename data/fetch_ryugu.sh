@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 # Download the Ryugu inputs from JAXA DARTS: the calibrated (L2c) Hayabusa2 ONC-T archives of the three
 # hovering campaigns (2018-07-10: 19 deg, 2018-08-31: 40 deg, 2019-01-15: 7 deg), the Hayabusa2 SPICE
 # kernels plus the NAIF generic planetary kernel, and the SfM reference shape of Watanabe et al. (2019).

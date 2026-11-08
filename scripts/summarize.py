@@ -1,6 +1,5 @@
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 """Summarise finished runs in the terms of the paper's tables: mean and s.d. over the splits of the
 mean and RMSE vertex-to-reference distance (m), F-score at 1 m, normal error (deg) and the matched
 held-out-image PSNR / SSIM / LPIPS. Reads <output>/<campaign>/pcgs_s<k>/table_<mesh>.json (the 'frame'

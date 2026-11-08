@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 # One PCGS run end to end on one split of one campaign, as in the paper:
 #   1. train (train.py, flags from configs/<campaign>.sh), 30k iterations
 #   2. render the held-out views (pcgs/render_views.py: albedo x lunar-Lambert shading, no cast shadows)

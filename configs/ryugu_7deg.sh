@@ -1,6 +1,5 @@
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 # Ryugu, Hayabusa2 ONC-T, 2019 Jan 15, 20.18-20.26 km, phase 7.1-7.3 deg.
 # 60 images, 3 random splits of 50 training / 10 held-out images. Reference: SfM model of Watanabe et al. (2019).
 # Phase < 15 deg: the albedo total-variation prior is active, cast shadows are not.

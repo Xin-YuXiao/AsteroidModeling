@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 # Download the public inputs of one campaign and build its scene (run in the data-preparation
 # environment, data/requirements.txt):
 #   SPICE geometry -> 60 frames, 8-bit PNG images and body masks -> SIFT features (COLMAP) ->

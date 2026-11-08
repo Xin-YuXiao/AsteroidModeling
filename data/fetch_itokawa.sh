@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# PCGS: photometrically constrained Gaussian splatting. Copyright (C) 2026 Xin-Yu Xiao and Fei He.
-# Free for non-commercial, research and evaluation use under LICENSE.md (Gaussian-Splatting License);
-# see NOTICE.md.
+# PCGS: photometrically constrained Gaussian splatting. Copyright (c) 2026 Xin-Yu Xiao and Fei He.
+# SPDX-License-Identifier: MIT
 # Download the Itokawa inputs: Hayabusa AMICA v-band FITS frames of 2005-09-28..10-02 (JAXA DARTS),
 # the Hayabusa SPICE kernels (DARTS) plus the NAIF generic leap-second and planetary kernels, and the
 # Gaskell SPC reference shape (3.1 M facets). Idempotent: existing files are skipped.

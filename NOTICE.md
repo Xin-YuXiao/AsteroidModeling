@@ -1,12 +1,16 @@
 # Notice
 
-PCGS is a derivative of **2D Gaussian Splatting** (2DGS; Huang et al., SIGGRAPH 2024,
+PCGS is built on **2D Gaussian Splatting** (2DGS; Huang et al., SIGGRAPH 2024,
 <https://github.com/hbb1/2d-gaussian-splatting>, commit `f3e3b9f`), which is itself built on
 **3D Gaussian Splatting** (Kerbl et al., SIGGRAPH 2023, <https://github.com/graphdeco-inria/gaussian-splatting>).
-The whole repository is therefore distributed under the Gaussian-Splatting License in
-[`LICENSE.md`](LICENSE.md), reproduced without modification: research and evaluation use only,
-no commercial use without the consent of the licensors. The copyright notices in the upstream files
-are retained.
+
+- The PCGS code (`pcgs/`, `extraction/`, `evaluation/`, `data/`, `configs/`, `scripts/`, `benchmark/`,
+  `tests/`, `docs/`) is released under the MIT License ([`LICENSE`](LICENSE)).
+- The files taken from 2DGS, modified or not (listed below), and the two submodules remain under the
+  Gaussian-Splatting License ([`LICENSE.md`](LICENSE.md), reproduced
+  without modification): research and evaluation use only, no commercial use without the consent of the
+  licensors. Their copyright notices are retained. Training with PCGS uses these files, so the complete
+  training pipeline is subject to that license.
 
 ## What comes from 2DGS
 
@@ -26,7 +30,7 @@ Not included from 2DGS: the DTU / Tanks-and-Temples / Mip-NeRF 360 evaluation sc
 ## What is new in PCGS
 
 Copyright (C) 2026 Xin-Yu Xiao and Fei He (Institute of Geology and Geophysics, Chinese Academy of
-Sciences; University of Chinese Academy of Sciences), distributed under the same license:
+Sciences; University of Chinese Academy of Sciences), released under the MIT License:
 
 - `pcgs/`: photometric rendering under the SPICE Sun direction (lunar-Lambert), cast shadows by
   shadow mapping with the darkness gate, albedo total variation, the phase rule, the limb and night-side

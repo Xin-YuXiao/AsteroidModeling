@@ -12,7 +12,7 @@ authors:
     affiliation: "Institute of Geology and Geophysics, Chinese Academy of Sciences; University of Chinese Academy of Sciences"
 repository-code: "https://github.com/Xin-YuXiao/AsteroidModeling"
 url: "https://xin-yuxiao.github.io/AsteroidModeling/"
-license-url: "https://github.com/Xin-YuXiao/AsteroidModeling/blob/main/LICENSE.md"
+license: MIT
 keywords:
   - asteroid shape modelling
   - Gaussian splatting
