@@ -83,27 +83,30 @@ errors from about 50 images, after about 30~min of training on a single GPU.}
 \section{Introduction}
 \label{sec:intro}
 
-The global shape of an asteroid is one of the first and most widely used products of a spacecraft encounter. Combined
+The global shape of an asteroid is one of the first and most widely used products of a spacecraft encounter. Before an
+encounter, lightcurve inversion \citep{Kaasalainen2001} and radar observations \citep{Ostro2002} provide shape estimates,
+but at a much lower resolution. Combined
 with the mass, the volume gives the bulk density and hence the porosity, from which Itokawa \citep{Fujiwara2006} and
 Ryugu \citep{Watanabe2019} were identified as rubble piles. The shape also determines the surface gravity and slopes,
 enters thermal and dynamical models, and supports navigation and the selection of landing and sampling sites
 \citep{Lauretta2019}. Most mission shape models have been derived with two image-based techniques. Stereophotogrammetry,
 which includes structure from motion and multi-view stereo (SfM-MVS), triangulates surface points that are matched
-between images \citep{Preusker2015,Preusker2017,Watanabe2019}. Stereophotoclinometry (SPC) estimates the slopes and
+between images \citep{Jaumann2012,Preusker2015,Preusker2017,Watanabe2019}. Stereophotoclinometry (SPC) estimates the slopes and
 albedo of small surface patches from their brightness in many images and ties the patches together through stereo
-control points \citep{Gaskell2008,Jorda2016,Palmer2022}. When a laser altimeter is on board, it provides an independent
+control points \citep{Gaskell2008,Jorda2016,Park2019,Palmer2022}. When a laser altimeter is on board, it provides an independent
 reference: the SPC models of Bennu, for example, were validated against the OSIRIS-REx Laser Altimeter
-\citep{Barnouin2019,AlAsad2021}, whose ranges also yielded a global shape model \citep{Seabrook2022}. The image-based
+\citep{Daly2017,Barnouin2019,AlAsad2021}, whose ranges also yielded a global shape model \citep{Seabrook2022}. The image-based
 techniques require hundreds to thousands of images with repeated coverage, and SPC in addition demands considerable
 effort from analysts. In the first days of a rendezvous, however, a shape model is already needed, while only a few
 dozen images from a narrow range of viewing geometries may be available.
 
 Learned scene representations can reconstruct surfaces from such small image sets. Neural radiance fields
-\citep{Mildenhall2020} and neural signed distance functions \citep{Wang2021NeuS} have been adapted to small bodies and
+\citep{Mildenhall2020} and neural signed distance functions \citep{Wang2021NeuS,Li2023Neuralangelo} have been adapted to small bodies and
 agree with mission shape models at the metre level \citep{ChenS2024,ChenH2024,ChenH2025}, but they take hours to days to
 train. Gaussian splatting \citep{Kerbl2023} instead represents a scene by explicit Gaussian primitives that are
-rasterised in real time. Its surface-oriented variants, such as two-dimensional Gaussian splatting
-\citep[2DGS;][]{Huang2024}, Gaussian opacity fields \citep[GOF;][]{Yu2024GOF}, and PGSR \citep{Chen2024PGSR}, extract
+rasterised in real time. Its surface-oriented variants, such as SuGaR \citep{Guedon2024}, two-dimensional Gaussian splatting
+\citep[2DGS;][]{Huang2024}, Gaussian opacity fields \citep[GOF;][]{Yu2024GOF}, Gaussian surfels \citep{Dai2024Surfels},
+RaDe-GS \citep{Zhang2024RaDe}, and PGSR \citep{Chen2024PGSR}, extract
 meshes after tens of minutes of training. Asteroid-GS \citep{Zhang2025AsteroidGS} adapted Gaussian splatting to
 asteroids by pruning Gaussians with foreground masks, predicting colour with small networks that take the illumination
 as input, and adding geometric regularisation. On Itokawa and Ryugu, it reached accuracies comparable to those of
@@ -114,8 +117,12 @@ brightness of a surface element is represented by a colour that varies freely wi
 supplemented by per-image appearance codes \citep{MartinBrualla2021} or neural networks. Spacecraft images of an airless
 body are formed under different conditions. The surface has a nearly uniform reflectance and is illuminated by the Sun
 from a direction that is known for every image. The variation of the brightness with the local surface orientation is
-precisely the signal that photoclinometry inverts for slopes \citep{Horn1990,Gaskell2008}, and a free appearance model
-can absorb this signal rather than exploit it. In Earth observation, the Sun direction has been incorporated into neural
+precisely the signal that photoclinometry inverts for slopes \citep{Horn1990,Gaskell2008}, and planetary mapping has long
+combined shape from shading with stereo or altimetry for this reason \citep{Kirk2003,Grumpe2014,Alexandrov2018}. A free
+appearance model can absorb this signal rather than exploit it. Inverse-rendering methods for neural radiance fields and
+Gaussian splatting decompose the appearance into reflectance and illumination
+\citep{Zhang2021NeRFactor,Liang2024GSIR,Jiang2024GaussianShader,Gao2024Relightable}, but they estimate an unknown
+illumination instead of using a known one. In Earth observation, the Sun direction has been incorporated into neural
 scene representations to model shadows and solar illumination \citep{Derksen2021,Mari2022,Mari2023}, and EOGS introduced
 shadow mapping from the viewpoint of the Sun into Gaussian splatting \citep{SavantAira2025}. \citet{Nolan2026} replaced
 the colour of Gaussian splatting with a physically based reflectance model for local terrain on Vesta and Ceres and
@@ -573,7 +580,7 @@ consistently, with registered volume errors of $-1.4$ to $-3.0$\% on Itokawa and
 \end{table}
 
 The reconstructions in Fig.~\ref{fig:recon}a--h show where these differences arise. All methods recover the global
-shapes, namely the elongated, two-lobed shape of Itokawa and the spinning-top shape of Ryugu with its equatorial ridge,
+shapes, namely the elongated, two-lobed shape of Itokawa and the spinning-top shape of Ryugu with its equatorial ridge \citep{Watanabe2019,Sugita2019},
 and they differ mainly at the scale of individual boulders. In the windows of greatest relief (Fig.~\ref{fig:recon}b,f),
 \pcgs\ reproduces the boulder-strewn terrain of the reference models, PGSR shows similar relief with streak artefacts,
 and Asteroid-GS smooths the surface so that only the largest blocks remain. Accordingly, the signed distance of \pcgs\
@@ -678,8 +685,9 @@ broad error distribution, with deviations of several metres in both directions.
 
 The learned partition parameter $L$ of the lunar-Lambert function also varies with the phase angle. On Ryugu, it
 decreases from 0.78 at 7$^\circ$ to 0.62 at 19$^\circ$ and 0.37 at 40$^\circ$, with differences between splits below
-0.01, and the value of 0.64 for Itokawa at 10$^\circ$ lies between the first two. \citet{McEwen1991} found the same
-trend for the Moon. On Bennu, $L$ is about 0.1. Because Eq.~(\ref{eq:ll}) contains no phase function and the Bennu
+0.01, and the value of 0.64 for Itokawa at 10$^\circ$ lies between the first two. \citet{McEwen1991} found the same trend for the Moon, and disk-resolved photometric studies of Ryugu and Bennu
+\citep{Tatsumi2020,Golish2021} likewise describe the brightness with phase-dependent photometric functions; see
+\citet{Li2015} for a review of asteroid photometry. On Bennu, $L$ is about 0.1. Because Eq.~(\ref{eq:ll}) contains no phase function and the Bennu
 images span 26--60$^\circ$, this value probably also absorbs the phase dependence of the brightness and should not be
 interpreted as a photometric measurement.
 
@@ -922,8 +930,7 @@ to be rescaled for images of other resolutions.
 
 The phase threshold and the night-side band were chosen with the help of image sets that also serve for the evaluation,
 and the 7$^\circ$ image set is the only one not used during development (Sect.~\ref{sec:images}). In addition, the
-comparison with the baselines is incomplete at 7$^\circ$ and 40$^\circ$ on Ryugu, and it does not include a classical
-SfM-MVS pipeline or a neural implicit method trained on the same images; for the latter, only published results are
+comparison with the baselines is incomplete at 7$^\circ$ and 40$^\circ$ on Ryugu, and it does not include a classical SfM-MVS pipeline \citep{Furukawa2010,Schonberger2016MVS} or a neural implicit method trained on the same images; for the latter, only published results are
 compared (Sect.~
 ef{sec:published}). Finally, all image sets are hovering
 sequences that cover all longitudes and have SPICE-based poses; shorter arcs, such as those of a flyby, and less
