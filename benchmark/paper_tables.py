@@ -305,7 +305,7 @@ def tables_v3():
                   notes=["Unshaded albedo: the rendered albedo is compared with the image directly (no photometric "
                          "function). View-dependent colour: the albedo is replaced by the third-degree spherical-harmonic "
                          "colour of 2DGS. Both variants also lose the phase switch, which acts on the shading. Columns as "
-                         "in Table~\\ref{tab:main}; lower is better except for the F-score and PSNR. –: not run."]))
+                         "in Table~\\ref{tab:main}; lower is better except for the F-score and PSNR. Variants not run on an image set are omitted."]))
     ph = lambda l, t, o=False, tm=None: row(l, "itokawa", t, splits=s0, ours=o) | ({"tagmap": tm} if tm else {})  # noqa: E731
     T.append(dict(key="phase", title="Shape accuracy on the five image sets, ordered by phase angle.",
                   lead="First split; mean distance (m) and F-score at 1 m.", sd=False, size="footnotesize", sep=2.0, drop_empty=True,
@@ -316,7 +316,7 @@ def tables_v3():
                                 ph("PCGS without night-side band", "pcgs-v18"),
                                 ph("PCGS (this work)", PCGS3, True)])],
                   notes=["Phase switch: albedo prior below 15°, cast shadows at and above 15°. The Bennu entry of "
-                         "Asteroid-GS is Asteroid-GS† (scene extent of its released code). –: not run. Lower mean "
+                         "Asteroid-GS is Asteroid-GS† (scene extent of its released code). Lower mean "
                          "distance and higher F-score are better. Bold: best; underlined: second best."]))
     return T
 

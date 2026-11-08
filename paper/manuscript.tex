@@ -56,10 +56,9 @@ albedo that is shaded by a lunar-Lambert function under the Sun direction of eac
 terminator is excluded from the silhouette loss, cast shadows or an albedo prior are added depending on the phase
 angle, and watertight meshes are fused from depth maps that agree across views. We applied \pcgs\ to five image sets
 of Itokawa, Ryugu, and Bennu at phase angles of 7--60$^\circ$ and compared it with four Gaussian splatting methods.}
-{The mean distance to the mission shape models is 0.59~m for Itokawa and 0.62~m for Ryugu, 37\% and 15\% lower than
-that of the most accurate competing method. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, against more than 3.7~m for the other methods. Replacing the shading with view-dependent colour increases the mean
-distance by 30\% on Itokawa and 6\% on Ryugu and to 4.7~m on Bennu, as does removing the
-night-side band. Volumes agree with the reference models to within 0.3\% at the reference scale and 3.4\% at the trajectory scale.}
+{The mean distance to the mission shape models is 0.59~m for Itokawa and 0.62~m for Ryugu, 37\% and 15\% below the most accurate competing method. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, against more than 3.7~m for the other methods. Replacing the shading with view-dependent colour increases the mean
+distance by 30\% on Itokawa and 6\% on Ryugu and to 4.7~m on Bennu, where removing the
+night-side band raises it to 4.2~m. Volumes agree with the reference models to within 0.32\% at the reference scale and 3.4\% at the trajectory scale.}
 {Photometric rendering, combined with a night-side band and consistency-filtered depth fusion, yields watertight
 global shape models with sub-metre mean distances from about 50 images and 30~min of training on a single GPU.}
 
@@ -508,7 +507,7 @@ distance per 5$^\circ$ latitude band of the reference; grey shading marks latitu
 
 \paragraph{Comparison with Gaussian splatting methods.} Table~\ref{tab:main} and Fig.~\ref{fig:numbers}a,b compare the
 methods on Itokawa and on the 19$^\circ$ Ryugu image set. \pcgs\ achieves the lowest mean distance, RMSE, and Chamfer
-distance and the highest F-score at 1~m on both bodies. 2DGS and GOF are far less accurate, with mean distances of 2.4--6.6~m. The mean distance of \pcgs, 0.59~m on Itokawa
+distance and the highest F-score at 1~m on both bodies. 2DGS and GOF are far less accurate, with mean distances of 2.40--6.55~m. The mean distance of \pcgs, 0.59~m on Itokawa
 and 0.62~m on Ryugu, is 37\% and 15\% lower than that of the most accurate competing method on each body
 (Asteroid-GS$^\dagger$ and PGSR), and its RMSE is lower by 44\% and 24\%. \pcgs\ ranks first on every split and under
 all four post-processing protocols (Table~\ref{tab:protocol}). On Ryugu, part of the margin over PGSR may come from the
@@ -519,7 +518,7 @@ offset from the baselines (Sect.~\ref{sec:implementation}); without the correcti
 The lower errors are not obtained at the expense of completeness. The accuracy and the completeness at 1~m both exceed
 those of every other method (Table~\ref{tab:shape_full}), and the cumulative distributions in Fig.~\ref{fig:curves}a--d
 show the largest lead at sub-metre distances. On Ryugu, \pcgs\ and PGSR perform similarly over most of the surface:
-their Chamfer distances differ by only 0.03~m, and PGSR has a slightly higher F-score at 2~m. The advantage of \pcgs\ on
+their Chamfer distances differ by only 0.04~m, and PGSR has a slightly higher F-score at 2~m. The advantage of \pcgs\ on
 this body lies mainly in the absence of large errors, which is why it is most pronounced in the RMSE. Apart from the F-score at 2~m on Ryugu, only the normal
 error does not favour \pcgs: Asteroid-GS has the lowest normal error on both bodies, and on Itokawa PGSR is also
 slightly better than \pcgs. This is probably because the smooth surfaces of Asteroid-GS carry little high-frequency
@@ -656,7 +655,7 @@ night-side band, which is only a few pixels wide at low phase angle, covers a cr
 The three Ryugu image sets, acquired weeks to months apart under different illumination, yield consistent shapes
 (Fig.~\ref{fig:ryuguphase}). Seen from the same camera, the three meshes are nearly indistinguishable at the scale of the
 whole body and of the large boulders (Fig.~\ref{fig:ryuguphase}a,b), their signed distances are all centred close to
-zero (Fig.~\ref{fig:ryuguphase}c), and their registered volumes differ by at most 0.11\% (Table~\ref{tab:volume}).
+zero (Fig.~\ref{fig:ryuguphase}c), and their registered volumes differ by at most 0.1\% (Table~\ref{tab:volume}).
 Asteroid-GS, trained on the 40$^\circ$ images, has a broad error distribution with deviations of several metres in
 both directions.
 
@@ -724,8 +723,8 @@ comparable accuracy rather than a ranking.
 \label{sec:ablation}
 
 Table~\ref{tab:ablation} quantifies the contribution of each component of \pcgs\ with models in which one
-component is removed or replaced while all others are kept, trained on the first split of each image set and evaluated
-as in Table~\ref{tab:main}. Removing the photometric rendering, the multi-view consistency, or the silhouette loss increases the mean distance and the RMSE on Itokawa and on Ryugu at 19$^\circ$ and 40$^\circ$, whereas the night-side band affects the mean distance only at high phase angle.
+component is removed or replaced while all others are kept, trained on the first split of Itokawa, Ryugu at 19$^\circ$ and 40$^\circ$, and Bennu and evaluated as in
+Table~\ref{tab:main}. Removing the photometric rendering, the multi-view consistency, or the silhouette loss increases the mean distance and the RMSE on Itokawa and on Ryugu at 19$^\circ$ and 40$^\circ$, whereas the night-side band affects the mean distance only at high phase angle.
 
 \input{tables/ablation}
 
@@ -740,7 +739,7 @@ from 1.07 to 2.46~m, and the normal error increases on both bodies. Because the 
 removed as well, so this comparison measures the photometric model together with the phase switch. The model without
 the phase switch separates the two. Compared with it, removing the shading on Itokawa increases the mean distance from
 0.68 to 0.89~m and the normal error from 14.4$^\circ$ to 16.3$^\circ$ and lowers the F-score at 1~m from 0.841 to
-0.799, whereas the RMSE remains at 2.46~m. The shading thus improves the bulk of the surface, and the albedo prior
+0.799, whereas the RMSE remains almost unchanged (2.47 and 2.46~m). The shading thus improves the bulk of the surface, and the albedo prior
 mainly removes large errors.
 Replacing the shaded albedo by the view-dependent colour of 2DGS, the usual appearance model of Gaussian splatting,
 within the otherwise unchanged pipeline increases the mean distance from 0.60 to 0.78~m on Itokawa and from 0.62 to
@@ -829,7 +828,7 @@ Initial extraction                    & 0.78 & 1.56 & 0.769 & 1.35 & 1.66 & 0.40
 + offset to tie points & 0.64 & 1.29 & 0.848 & 0.66 & 0.95 & 0.803 \\
 \bottomrule
 \end{tabular}
-\tablefoot{Models without the phase switch, averaged over three splits. Mean and RMSE in metres; $<$1~m: fraction of
+\tablefoot{Models with shading only (without the phase switch and the night-side band), averaged over three splits. Mean and RMSE in metres; $<$1~m: fraction of
 vertices within 1~m of the reference.}
 \end{table}
 
@@ -837,7 +836,7 @@ vertices within 1~m of the reference.}
 \label{sec:discussion}
 
 \paragraph{Accuracy relative to the image resolution.} The mean distances of \pcgs\ are at or below one pixel. On
-Itokawa, the mean distance corresponds to 0.78 pixel at a pixel scale of 0.76~m, and on Ryugu to 0.29 pixel at 2.2~m.
+Itokawa, the mean distance corresponds to 0.78 pixel at a pixel scale of 0.76~m, and on Ryugu to 0.29 pixel at 2.16~m.
 On Bennu, whose images range from 0.62 to 2.6~m per pixel, it lies between 0.24 and 1.0 pixel. Mean distances below one
 pixel are possible because every surface element is seen in many images, but they do not imply that features smaller
 than a pixel are resolved (Fig.~\ref{fig:recon}j). On Itokawa, the mean distance is comparable to the mean facet size
@@ -902,8 +901,7 @@ silhouette loss from removing the unlit part of the body, and a phase switch add
 
 On Itokawa and Ryugu, the mean distance of \pcgs\ to the mission shape models is 0.59 and 0.62~m, 37\% and 15\% lower
 than that of the most accurate of four Gaussian splatting methods on each body. Against the laser-altimeter model of
-Bennu, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds 3.7~m. At the scale of the
-reference models, the volumes agree to within 0.3\%; at the trajectory scale, they agree to within 3.4\%.
+Bennu, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds 3.7~m. At the scale of the reference models, the volumes agree to within 0.32\%; at the trajectory scale, they agree to within 3.4\%.
 
 The ablation identifies the source of these gains. At high phase angle, the night-side band and the photometric model are both essential: on
 Bennu, the mean distance increases to 4.18~m without the band, to 2.44~m without the cast shadows, and to 4.72~m with
