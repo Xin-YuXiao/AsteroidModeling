@@ -1,25 +1,36 @@
 \begin{table}[t]
 \centering
-\caption{Leave-one-out ablation. First split; one component removed at a time.}
+\caption{Leave-one-out ablation. First split; one component removed or replaced at a time.}
 \label{tab:ablation}
 \footnotesize
 \setlength{\tabcolsep}{3.0pt}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-Method & Mean (m) $\downarrow$ & RMSE (m) $\downarrow$ & F@1 m $\uparrow$ & Normal (\textdegree{}) $\downarrow$ \\
+Method & Mean (m) & RMSE (m) & F@1 m & Normal (\textdegree{}) \\
 \midrule
 \multicolumn{5}{@{}l}{\textit{Itokawa, 10\textdegree{}}} \\
 \textbf{PCGS (full model)} & 0.60 & 1.07 & 0.849 & 14.8 \\
-w/o night-side band & 0.58 & 0.92 & 0.846 & 14.4 \\
+Unshaded albedo & 0.89 & 2.46 & 0.799 & 16.3 \\
+No night-side band & 0.58 & 0.92 & 0.846 & 14.4 \\
+No silhouette loss & 0.97 & 2.29 & 0.762 & 16.5 \\
+No multi-view NCC & 1.26 & 3.07 & 0.627 & 20.4 \\
 \addlinespace[3pt]
 \multicolumn{5}{@{}l}{\textit{Ryugu, 19\textdegree{}}} \\
 \textbf{PCGS (full model)} & 0.62 & 0.89 & 0.798 & 12.1 \\
-w/o night-side band & 0.62 & 0.90 & 0.791 & 11.9 \\
+Unshaded albedo & 0.70 & 1.00 & 0.745 & 13.1 \\
+No night-side band & 0.62 & 0.90 & 0.791 & 11.9 \\
+No silhouette loss & 0.64 & 0.98 & 0.791 & 12.5 \\
+No multi-view NCC & 0.82 & 1.21 & 0.694 & 13.7 \\
+No pixel correction & 0.65 & 0.93 & 0.785 & 15.0 \\
 \addlinespace[3pt]
 \multicolumn{5}{@{}l}{\textit{Ryugu, 40\textdegree{}}} \\
 \textbf{PCGS (full model)} & 0.66 & 0.95 & 0.757 & 12.8 \\
-w/o night-side band & 0.71 & 1.07 & 0.709 & 12.5 \\
+No night-side band & 0.71 & 1.07 & 0.709 & 12.5 \\
+\addlinespace[3pt]
+\multicolumn{5}{@{}l}{\textit{Bennu, 26--60\textdegree{}}} \\
+\textbf{PCGS (full model)} & 0.59 & 1.21 & 0.811 & 32.9 \\
+No night-side band & 4.18 & 10.28 & 0.444 & 34.8 \\
 \bottomrule
 \end{tabular}
-\tablefoot{Without photometric rendering, the albedo is compared with the image directly, and the priors, which act on the shading, are also removed. Columns as in Table~\ref{tab:main}.}
+\tablefoot{Unshaded albedo: the rendered albedo is compared with the image directly (no photometric function). View-dependent colour: the albedo is replaced by the third-degree spherical-harmonic colour of 2DGS. Both variants also lose the phase switch, which acts on the shading. Columns as in Table~\ref{tab:main}; lower is better except for the F-score. --: not run.}
 \end{table}

@@ -183,7 +183,7 @@ def fig_heldout(d, A, out, body="ryugu", idx=0):
             if x and y:
                 ax.scatter(np.mean(x), np.mean(y), s=22, marker=mk, color=C[k], edgecolor="white", lw=0.4, zorder=3)
     ax.set_yscale("log")
-    ax.set_xlabel("Held-out PSNR (dB)")
+    ax.set_xlabel("Test PSNR (dB)")
     ax.set_ylabel("Mean distance (m)")
     ax.set_yticks([0.5, 1, 2, 5])
     ax.set_yticklabels(["0.5", "1", "2", "5"])
@@ -530,7 +530,7 @@ def fig_night(d, A, out):
     head = 4.6 * mm
     H = head + 2 * ph + g + 1.0 * mm
     fig = plt.figure(figsize=(W, H), facecolor="white")
-    titles = [f"Bennu ({mt['image']['phase']:.0f}°): foreground mask and night-side band", "Reference (OLA)", "PCGS without night-side band", "PCGS (this work)"]
+    titles = [f"Test image (Bennu, {mt['image']['phase']:.0f}°)", "Reference (OLA)", "PCGS without night-side band", "PCGS (this work)"]
     for j in range(4):
         ax = fig.add_axes([j * (pw + g) / W, (H - head - ph) / H, pw / W, ph / H])
         if j == 0:
@@ -698,7 +698,7 @@ def fig_teaser(d, A, out):
     pw = (W - lab - 4 * g) / 5
     H = head + sum(pw / bl["asp"] + g for _, _, bl in blocks)
     fig = plt.figure(figsize=(W, H), facecolor="white")
-    titles = ["Held-out image", "Reference", "PCGS (this work)", "PGSR", "Asteroid-GS"]
+    titles = ["Test image", "Reference", "PCGS (this work)", "PGSR", "Asteroid-GS"]
     y = H - head
     for bi, (b, name, bl) in enumerate(blocks):
         hf = pw / bl["asp"]

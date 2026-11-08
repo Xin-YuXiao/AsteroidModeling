@@ -34,11 +34,11 @@ INK, INK2 = rf.INK, rf.INK2
 C = rf.COLOR
 MAIN = [("2DGS", "2dgs-dtu"), ("GOF", "gof"), ("PGSR", "pgsr"), ("Asteroid-GS", "ags"),
         ("Asteroid-GS†", "ags-camext"), ("PCGS (this work)", "pcgs-v18n")]
-BENNU = [("2DGS", "2dgs-dtu"), ("PGSR", "pgsr"), ("Asteroid-GS†", "ags-camext"), ("w/o night-side band‡", "pcgs-v18"),
+BENNU = [("2DGS", "2dgs-dtu"), ("PGSR", "pgsr"), ("Asteroid-GS†", "ags-camext"), ("No night-side band‡", "pcgs-v18"),
          ("PCGS (this work)", "pcgs-v18n")]
 # metric, column title, axis limit for a-b, for c (bars beyond it are cut and carry their value)
 COLS = [("mean", "Mean distance (m)", 3.0, 6.0), ("rmse", "RMSE (m)", 5.0, 12.0), ("f1", "F-score at 1 m", 1.0, 1.0),
-        ("normal", "Normal error (°)", 45.0, 60.0), ("psnr", "Held-out PSNR (dB)", 42.0, 25.0)]
+        ("normal", "Normal error (°)", 45.0, 60.0), ("psnr", "Test PSNR (dB)", 42.0, 25.0)]
 PRIOR_C = rf.PRIOR
 PRIORS = [  # campaign, body, (label, run, prior, selected by the phase rule)
     ("Itokawa 10°", "itokawa", [("albedo TV", "pcgs-v14t", "tv", True)]),
@@ -155,7 +155,7 @@ def main():
         fig.text((lm + j * (pw + gap)) / W, 1 - 4.6 * mm / H, f"{title} {arrow}", fontsize=6.3, va="baseline",
                  ha="left", color=INK, fontweight="bold")
     for letter, body, text in (("a", "itokawa", "Itokawa  ·  Hayabusa AMICA, phase 10°  ·  "
-                                                "3 splits of 50 training and 10 held-out images"),
+                                                "3 splits of 50 training and 10 test images"),
                                ("b", "ryugu", "Ryugu  ·  Hayabusa2 ONC-T, phase 19°  ·  3 splits")):
         heading(letter, tops[letter], text)
         for j, (key, title, clip, _) in enumerate(COLS):
@@ -172,7 +172,7 @@ def main():
             if letter == "b":
                 ax.set_xlabel(title, fontsize=6, labelpad=1.5, color=INK)
     heading("c", tops["c"], "Bennu  ·  OSIRIS-REx MapCam, phase 26–60°  ·  reference from the laser "
-                            "altimeter (OLA), independent of the images  ·  three splits (‡ split 0)")
+                            "altimeter (OLA)  ·  three splits (‡ first split)")
     for j, (key, title, _, clip) in enumerate(COLS):
         ax = ax_at(lm + j * (pw + gap), tops["c"], pw, 5 * pitch)
         frame(ax)

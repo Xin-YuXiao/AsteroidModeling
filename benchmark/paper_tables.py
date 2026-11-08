@@ -25,6 +25,8 @@ METRIC = {
     "chamfer": ("Chamfer", "m", -1, 2, lambda g, r: g["chamfer"]),
     "prec": ("Acc.", "%", 1, 1, lambda g, r: 100 * g["PR"]["F@1m"][0]),
     "rec": ("Compl.", "%", 1, 1, lambda g, r: 100 * g["PR"]["F@1m"][1]),
+    "precf": ("Acc.", "", 1, 3, lambda g, r: g["PR"]["F@1m"][0]),
+    "recf": ("Compl.", "", 1, 3, lambda g, r: g["PR"]["F@1m"][1]),
     "f05": ("F@0.5 m", "", 1, 3, lambda g, r: g["F"]["F@0.5m"]),
     "f1": ("F@1 m", "", 1, 3, lambda g, r: g["F"]["F@1m"]),
     "f2": ("F@2 m", "", 1, 3, lambda g, r: g["F"]["F@2m"]),
@@ -241,16 +243,21 @@ def to_tex_aa3(t):
     if not t.get("wide", True):
         s = s.replace(r"\begin{table*}[t]", r"\begin{table}[t]").replace(r"\end{table*}", r"\end{table}")
     s = s.replace("+ Taubin-20 (Table 1)", r"+ Taubin-20 (Table~\ref{tab:main})")
+    s = s.replace(r" $\downarrow$", "").replace(r" $\uparrow$", "").replace("held-out", "test")
+    s = s.replace(r"\multicolumn{1}{c}{Rule}", "Switch").replace("& Rule &", "& Switch &")
+    s = s.replace("the renders as each method writes them", "the rendered images as written by each method")
+    s = s.replace("render it at a canonical exposure", "are rendered at a canonical exposure")
     return s
 
 
 # ---------------------------------------------------------------- manuscript (A&A): PCGS = final model
 PCGS3 = "pcgs-v18n"
-SHORT = ("Distances in metres. Mean, RMSE: vertices of the reconstruction to the reference surface; Chamfer: "
-         "mean of the two directed mean distances; F@1 m: F-score at 1 m; Normal: mean angle between "
-         "corresponding normals; PSNR: held-out images after one gain and offset per image. Bold: best; "
-         "underlined: second best.")
-DAG3 = "†Asteroid-GS with the scene extent of its public code (the other rows use the object extent)."
+SHORT = ("Distances in metres. Mean, RMSE: unsigned distance from the vertices of the reconstruction to the "
+         "reference surface; Chamfer: mean of the two directed mean distances; F@1 m: F-score at 1 m; Normal: "
+         "mean angle between corresponding normals; PSNR: test images after one gain and offset per image. Lower "
+         "is better except for the F-score and PSNR. Bold: best mean; underlined: second best.")
+DAG3 = ("†Asteroid-GS with the scene extent that its released code derives from the camera positions; the other "
+        "rows use the object extent.")
 CAMP = [("ryugu_lp", "Ryugu, 7°"), ("itokawa", "Itokawa, 10°"), ("ryugu", "Ryugu, 19°"),
         ("ryugu_b2", "Ryugu, 40°"), ("bennu", "Bennu, 26–60°")]
 
@@ -261,7 +268,7 @@ def tables_v3():
     main = lambda b: [row(l, b, t) for l, t in base] + [row("PCGS (this work)", b, PCGS3, ours=True)]  # noqa: E731
     six = [col("mean"), col("rmse"), col("chamfer"), col("f1"), col("normal"), col("psnr")]
     T = [dict(key="main", title="Shape and image accuracy on Itokawa and Ryugu.",
-              lead="Mean ± standard deviation over three splits (50 training and 10 held-out images each).",
+              lead="Mean ± standard deviation over three splits (50 training and 10 test images each).",
               sd=True, size="footnotesize", sep=2.4, cols=six,
               colgroups=[("Shape against the reference model", 5), ("Images", 1)],
               groups=[("Itokawa (AMICA, phase 10°)", main("itokawa")), ("Ryugu (ONC-T, phase 19°)", main("ryugu"))],
@@ -272,31 +279,38 @@ def tables_v3():
               groups=[("", [row("2DGS", "bennu", "2dgs-dtu"), row("PGSR", "bennu", "pgsr"),
                             row("Asteroid-GS†", "bennu", "ags-camext"),
                             row("PCGS (this work)", "bennu", PCGS3, ours=True)])],
-              notes=[SHORT, DAG3, "GOF exceeded the available GPU memory on Bennu."])]
+              notes=[SHORT, DAG3, "GOF could not be run on Bennu because of its memory requirement."])]
     s0 = ["0"]
     ab = lambda l, b, t, o=False: row(l, b, t, splits=s0, ours=o)  # noqa: E731
-    abl = lambda b: [ab("PCGS (full model)", b, PCGS3, True), ab("w/o photometric rendering", b, PCGS3 + "-noshade"),  # noqa: E731
-                     ab("w/o phase-dependent prior", b, PCGS3 + "-noprior"), ab("w/o night-side band", b, "pcgs-v18"),
-                     ab("w/o silhouette loss", b, PCGS3 + "-nomask"), ab("w/o multi-view NCC", b, PCGS3 + "-nomv"),
-                     ab("w/o pixel convention", b, PCGS3 + "-nopix")]
-    T.append(dict(key="ablation", title="Leave-one-out ablation.", lead="First split; one component removed at a time.",
+    abl = lambda b: [ab("PCGS (full model)", b, PCGS3, True),  # noqa: E731
+                     ab("Unshaded albedo", b, PCGS3 + "-noshade"),
+                     ab("View-dependent colour", b, PCGS3 + "-sh3"),
+                     ab("No phase switch", b, PCGS3 + "-noprior"),
+                     ab("No night-side band", b, "pcgs-v18"),
+                     ab("No silhouette loss", b, PCGS3 + "-nomask"),
+                     ab("No multi-view NCC", b, PCGS3 + "-nomv"),
+                     ab("No pixel correction", b, PCGS3 + "-nopix")]
+    T.append(dict(key="ablation", title="Leave-one-out ablation.", lead="First split; one component removed or replaced at a time.",
                   sd=False, size="footnotesize", sep=3.0, wide=False, ranks=False, drop_empty=True,
                   cols=[col("mean"), col("rmse"), col("f1"), col("normal")],
-                  groups=[("Itokawa, 10°", abl("itokawa")), ("Ryugu, 19°", abl("ryugu")), ("Ryugu, 40°", abl("ryugu_b2"))],
-                  notes=["Without photometric rendering, the albedo is compared with the image directly, and the "
-                         "priors, which act on the shading, are also removed. Columns as in Table~\\ref{tab:main}."]))
+                  groups=[("Itokawa, 10°", abl("itokawa")), ("Ryugu, 19°", abl("ryugu")), ("Ryugu, 40°", abl("ryugu_b2")),
+                          ("Bennu, 26–60°", abl("bennu"))],
+                  notes=["Unshaded albedo: the rendered albedo is compared with the image directly (no photometric "
+                         "function). View-dependent colour: the albedo is replaced by the third-degree spherical-harmonic "
+                         "colour of 2DGS. Both variants also lose the phase switch, which acts on the shading. Columns as "
+                         "in Table~\\ref{tab:main}; lower is better except for the F-score. –: not run."]))
     ph = lambda l, t, o=False, tm=None: row(l, "itokawa", t, splits=s0, ours=o) | ({"tagmap": tm} if tm else {})  # noqa: E731
     T.append(dict(key="phase", title="Shape accuracy on the five image sets, ordered by phase angle.",
                   lead="First split; mean distance (m) and F-score at 1 m.", sd=False, size="footnotesize", sep=2.0, drop_empty=True,
                   colgroups=[(n, 2) for _, n in CAMP],
                   cols=[c for b, _ in CAMP for c in (dict(col("mean"), body=b), dict(col("f1"), body=b))],
                   groups=[("", [ph("PGSR", "pgsr"), ph("Asteroid-GS", "ags", tm={"bennu": "ags-camext"}),
-                                ph("PCGS w/o phase-dependent prior", PCGS3 + "-noprior"),
-                                ph("PCGS w/o night-side band", "pcgs-v18"),
+                                ph("PCGS without phase switch", PCGS3 + "-noprior"),
+                                ph("PCGS without night-side band", "pcgs-v18"),
                                 ph("PCGS (this work)", PCGS3, True)])],
-                  notes=["The phase-dependent prior is the albedo total variation below 15° and cast shadows at and "
-                         "above 15°. On Bennu, Asteroid-GS with the scene extent of its public code. –: not run. Bold: best; "
-                         "underlined: second best."]))
+                  notes=["Phase switch: albedo prior below 15°, cast shadows at and above 15°. The Bennu entry of "
+                         "Asteroid-GS is Asteroid-GS† (scene extent of its released code). –: not run. Lower mean "
+                         "distance and higher F-score are better. Bold: best; underlined: second best."]))
     return T
 
 
@@ -506,11 +520,26 @@ def main():
         notes = [n for n in t["notes"] if n != NIGHT and "bold red" not in n and "PCGS-N" not in n
                  and "§" not in n] + ["Bold: best; underlined: second best."]
         if t["key"] == "priors":
-            t = dict(t, title="The albedo prior and cast shadows on every image set.",
+            t = dict(t, title="Effect of the albedo prior and cast shadows.",
                      lead="First split; models without the night-side band, and the final model.")
-            notes = ["Rule: the prior that the phase rule selects. The 15° threshold was set after the 40° run with "
-                     "both priors. The final model adds the night-side band to the rule-selected prior.",
+            notes = ["Switch: the variant selected by the phase switch; the final model adds the night-side band to "
+                     "it. Shading only: photometric rendering without albedo prior and cast shadows. Lower is better "
+                     "except for the F-score and PSNR.",
                      "Bold: best; underlined: second best (image sets with three or more rows)."]
+            groups = [(g, [dict(r, label={"PCGS without priors": "Shading only"}.get(r["label"], r["label"])
+                                .replace("albedo TV", "albedo prior")) for r in rows]) for g, rows in groups]
+        if t["key"] == "shape_full":
+            t = dict(t, title="Complete shape metrics.", cols=[col({"prec": "precf", "rec": "recf"}.get(c["key"], c["key"]))
+                                                              for c in t["cols"]])
+            notes = [n.replace("shares of reconstructed", "fractions of reconstructed") for n in notes] + [
+                "Lower is better except for accuracy, completeness, and F-scores."]
+        if t["key"] == "images_full":
+            t = dict(t, title="Complete image metrics.", lead="Test images, mean ± s.d. over three splits.")
+            notes = [n.replace("held-out", "test") for n in notes] + ["Higher is better except for LPIPS."]
+        if t["key"] == "protocol":
+            t = dict(t, title="Mean distance and F-score at 1 m under four post-processing and registration "
+                     "protocols.", colgroups=[("Mesh as extracted", 2), ("+ SfM alignment", 2),
+                                               ("+ Taubin smoothing", 2), ("ICP registration", 2)])
         app.append(dict(t, groups=groups, notes=notes, lead=t["lead"].replace("protocol of Table 1",
                                                                               "protocol of Table~\\ref{tab:main}")))
     for t in tables_v3() + app:

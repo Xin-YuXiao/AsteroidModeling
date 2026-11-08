@@ -277,14 +277,14 @@ def scene_panel(fig, ax, sc):
             va="bottom", zorder=8)
     # legend in the black strip below the scene: only the classes present
     train = ~sc["is_test"]
-    items = ([(TV[0], "training view, phase < 15°")] if (sc["phase"][train] < 15).any() else []) +             ([(SHADOW[0], "training view, phase ≥ 15°")] if (sc["phase"][train] >= 15).any() else []) +             [("none", "held out"), (ACC, "image of c")]
+    items = ([(TV[0], "training view, phase < 15°")] if (sc["phase"][train] < 15).any() else []) +             ([(SHADOW[0], "training view, phase ≥ 15°")] if (sc["phase"][train] >= 15).any() else []) +             [("none", "test view"), (ACC, "image of c")]
     yl = 0.83 * res                                                    # below the camera ring
     for k, (c, t) in enumerate(items):
         xx, yy = 0.06 * res, yl + k * 0.068 * res
         ax.add_patch(Rectangle((xx, yy - 0.02 * res), 0.04 * res, 0.04 * res, fc=c,
                                ec="#e6e6e6" if c == "none" else c, lw=0.5, zorder=5))
         ax.text(xx + 0.06 * res, yy, t, color="white", fontsize=5.5, va="center", ha="left", zorder=5)
-    ax.text(0.06 * res, yl + len(items) * 0.068 * res, f"{int(train.sum())} training, {int(sc['is_test'].sum())} held-out "
+    ax.text(0.06 * res, yl + len(items) * 0.068 * res, f"{int(train.sum())} training, {int(sc['is_test'].sum())} test "
             f"views\n≈ {np.median(sc['dist_km']):.0f} km, not to scale", color="white", fontsize=5.2, ha="left",
             va="top", zorder=5, linespacing=1.3)
 
@@ -351,7 +351,7 @@ def main():
     cy, cx = (ys.min() + ys.max()) / 2, (xs.min() + xs.max()) / 2
     cc = clay[int(cy - cs):int(cy + cs), int(cx - cs):int(cx + cs)]
     clay_c = np.clip(cc[..., :3] * (0.66 / 0.60) * cc[..., 3:], 0, 1)
-    stages = [("1  Input", "spacecraft images $I$\n+ SPICE Sun and camera", "img"),
+    stages = [("1  Input", "spacecraft images $I$\n+ Sun direction, camera pose", "img"),
               ("2  Representation", "2D Gaussian surfels\nwith albedo and normal", "surf"),
               ("3  Photometric rendering", "Î = A · Φ(μ₀, μ; L) · V\nlunar-Lambert Φ, Sun visibility V", "pred"),
               ("4  Surface", "watertight mesh from\nmulti-view depth fusion", "mesh")]
@@ -421,7 +421,7 @@ def main():
               ("Residual $\\hat{I} - I$", np.where(m, res[sy, sx], np.nan), dict(cmap="PuOr_r", vmin=-0.15, vmax=0.15))]
     fig.text(0, (rt + 0.4 * mm) / H, "c", fontsize=8, fontweight="bold", va="bottom", ha="left", color=INK)
     fig.text(3.4 * mm / W, (rt + 0.55 * mm) / H,
-             f"Held-out Ryugu image decomposed by the trained model (ONC-T, phase {meta['image']['phase']:.0f}°)",
+             f"Test image of Ryugu decomposed by the trained model (ONC-T, phase {meta['image']['phase']:.0f}°)",
              fontsize=6.5, va="bottom", ha="left", color=INK)
     for k, (t, img, kw) in enumerate(panels):
         x = k * (pw + g)

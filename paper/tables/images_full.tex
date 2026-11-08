@@ -1,12 +1,12 @@
 \begin{table*}[t]
 \centering
-\caption{Image metrics in full. Held-out images, mean $\pm$ s.d. over three splits.}
+\caption{Complete image metrics. Test images, mean $\pm$ s.d. over three splits.}
 \label{tab:images_full}
 \footnotesize
 \setlength{\tabcolsep}{4.0pt}
 \begin{tabular}{@{}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}lr@{\,$\pm$\,}l@{}}
 \toprule
-Method & \multicolumn{2}{c}{PSNR raw (dB) $\uparrow$} & \multicolumn{2}{c}{PSNR (dB) $\uparrow$} & \multicolumn{2}{c}{SSIM $\uparrow$} & \multicolumn{2}{c}{LPIPS $\downarrow$} \\
+Method & \multicolumn{2}{c}{PSNR raw (dB)} & \multicolumn{2}{c}{PSNR (dB)} & \multicolumn{2}{c}{SSIM} & \multicolumn{2}{c}{LPIPS} \\
 \midrule
 \multicolumn{9}{@{}l}{\textit{Itokawa (AMICA, phase 10\textdegree{})}} \\
 2DGS & 33.1 & 1.1 & 33.6 & 1.0 & 0.968 & 0.005 & 0.109 & 0.011 \\
@@ -26,5 +26,5 @@ Asteroid-GS$^{\dagger}$ & 13.5 & 0.6 & 22.7 & 0.0 & 0.868 & 0.004 & 0.282 & 0.00
 \textbf{PCGS (this work)} & 31.0 & 0.1 & 31.3 & 0.1 & \textbf{0.952} & 0.001 & \underline{0.225} & 0.002 \\
 \bottomrule
 \end{tabular}
-\tablefoot{PSNR raw: the renders as each method writes them. The other columns after one gain and offset per image, fitted over the body, for every method; methods with per-image appearance codes (Asteroid-GS, GOF) have none for a held-out image and render it at a canonical exposure. $^{\dagger}$Asteroid-GS with the scene extent of its public repository (camera ring); the other rows use the object extent, as all methods do. $^{\ddagger}$First split only. Bold: best; underlined: second best.}
+\tablefoot{PSNR raw: the rendered images as written by each method. The other columns after one gain and offset per image, fitted over the body, for every method; methods with per-image appearance codes (Asteroid-GS, GOF) have none for a test image and are rendered at a canonical exposure. $^{\dagger}$Asteroid-GS with the scene extent of its public repository (camera ring); the other rows use the object extent, as all methods do. $^{\ddagger}$First split only. Bold: best; underlined: second best. Higher is better except for LPIPS.}
 \end{table*}

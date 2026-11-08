@@ -1,14 +1,14 @@
 \begin{table*}[t]
 \centering
-\caption{PCGS ranks first under every post-processing and registration protocol. Means over three splits.}
+\caption{Mean distance and F-score at 1 m under four post-processing and registration protocols. Means over three splits.}
 \label{tab:protocol}
 \footnotesize
 \setlength{\tabcolsep}{3.6pt}
 \begin{tabular}{@{}lrrrrrrrr@{}}
 \toprule
- & \multicolumn{2}{c}{Mesh as extracted} & \multicolumn{2}{c}{+ SfM alignment} & \multicolumn{2}{c}{+ Taubin-20 (Table~\ref{tab:main})} & \multicolumn{2}{c}{ICP registration} \\
+ & \multicolumn{2}{c}{Mesh as extracted} & \multicolumn{2}{c}{+ SfM alignment} & \multicolumn{2}{c}{+ Taubin smoothing} & \multicolumn{2}{c}{ICP registration} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
-Method & Mean (m) $\downarrow$ & F@1 m $\uparrow$ & Mean (m) $\downarrow$ & F@1 m $\uparrow$ & Mean (m) $\downarrow$ & F@1 m $\uparrow$ & Mean (m) $\downarrow$ & F@1 m $\uparrow$ \\
+Method & Mean (m) & F@1 m & Mean (m) & F@1 m & Mean (m) & F@1 m & Mean (m) & F@1 m \\
 \midrule
 \multicolumn{9}{@{}l}{\textit{Itokawa (AMICA, phase 10\textdegree{})}} \\
 2DGS & 6.58 & 0.532 & 6.55 & 0.540 & 6.55 & 0.546 & 6.56 & 0.539 \\

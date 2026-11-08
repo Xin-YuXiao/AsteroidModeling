@@ -41,7 +41,7 @@ surface orientation, as in photoclinometry.
   15% lower than the best competing method, and 0.62 m to the laser-altimeter model of Bennu, which is
   independent of the images. At the registered scale the volumes agree with the references to within 0.3%.
 - **Cost.** About half an hour of training per run on one A100 (17&ndash;47 min measured on a shared node),
-  plus 5&ndash;10 min of mesh extraction.
+  plus 4&ndash;10 min of mesh extraction.
 
 ## Contents
 
@@ -261,7 +261,7 @@ python scripts/summarize.py            # mean +- s.d. over the splits
 
 The paper trained three splits of `itokawa`, `ryugu_19deg` and `bennu`, splits 0&ndash;1 of `ryugu_40deg` and
 split 0 of `ryugu_7deg`; `ALL_SPLITS=1` runs all three splits everywhere. Each run takes 20&ndash;50 min of training
-on an A100, depending on the load of the GPU, plus 5&ndash;10 min of extraction and about 10 min of evaluation, and
+on an A100, depending on the load of the GPU, plus 4&ndash;10 min of extraction and about 10 min of evaluation, and
 writes 0.8&ndash;1.5 GB; the full reproduction needs about 20 GB of disk. Because COLMAP and the CUDA rasteriser are
 not bit-reproducible, rebuilt scenes and retrained models differ from ours at the level of the split-to-split
 scatter of the paper.

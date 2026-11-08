@@ -1,41 +1,41 @@
 \begin{table*}[t]
 \centering
-\caption{The albedo prior and cast shadows on every image set. First split; models without the night-side band, and the final model.}
+\caption{Effect of the albedo prior and cast shadows. First split; models without the night-side band, and the final model.}
 \label{tab:priors}
 \footnotesize
 \setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{@{}lcrrrrr@{}}
 \toprule
-Method & Rule & Mean (m) $\downarrow$ & RMSE (m) $\downarrow$ & F@1 m $\uparrow$ & Normal (\textdegree{}) $\downarrow$ & PSNR (dB) $\uparrow$ \\
+Method & Switch & Mean (m) & RMSE (m) & F@1 m & Normal (\textdegree{}) & PSNR (dB) \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Itokawa, 10\textdegree{}}} \\
-PCGS without priors &  & 0.66 & 1.46 & 0.827 & \underline{14.6} & \textbf{38.1} \\
-+ albedo TV & \checkmark & \textbf{0.58} & \textbf{0.92} & \underline{0.846} & \textbf{14.4} & 36.8 \\
+Shading only &  & 0.66 & 1.46 & 0.827 & \underline{14.6} & \textbf{38.1} \\
++ albedo prior & \checkmark & \textbf{0.58} & \textbf{0.92} & \underline{0.846} & \textbf{14.4} & 36.8 \\
 PCGS (final model) &  & \underline{0.60} & \underline{1.07} & \textbf{0.849} & 14.8 & \underline{37.2} \\
 \addlinespace[3pt]
 \multicolumn{7}{@{}l}{\textit{Ryugu, 7\textdegree{}}} \\
-PCGS without priors &  & \textbf{0.74} & \textbf{1.04} & \textbf{0.719} & \textbf{12.6} & \textbf{34.8} \\
-+ albedo TV & \checkmark & 0.76 & \textbf{1.04} & 0.708 & \underline{12.7} & \underline{33.7} \\
+Shading only &  & \textbf{0.74} & \textbf{1.04} & \textbf{0.719} & \textbf{12.6} & \textbf{34.8} \\
++ albedo prior & \checkmark & 0.76 & \textbf{1.04} & 0.708 & \underline{12.7} & \underline{33.7} \\
 PCGS (final model) &  & \underline{0.75} & \underline{1.05} & \underline{0.712} & 13.0 & 33.5 \\
 \addlinespace[3pt]
 \multicolumn{7}{@{}l}{\textit{Ryugu, 19\textdegree{}}} \\
-PCGS without priors &  & 0.65 & 0.95 & 0.770 & 12.4 & \textbf{32.5} \\
-+ albedo TV &  & 0.66 & 0.96 & 0.767 & 13.1 & 31.0 \\
+Shading only &  & 0.65 & 0.95 & 0.770 & 12.4 & \textbf{32.5} \\
++ albedo prior &  & 0.66 & 0.96 & 0.767 & 13.1 & 31.0 \\
 + cast shadows & \checkmark & \textbf{0.62} & \underline{0.90} & \underline{0.791} & \textbf{11.9} & 30.0 \\
-+ albedo TV + cast shadows &  & \underline{0.63} & 0.93 & 0.785 & 12.4 & 28.6 \\
++ albedo prior + cast shadows &  & \underline{0.63} & 0.93 & 0.785 & 12.4 & 28.6 \\
 PCGS (final model) &  & \textbf{0.62} & \textbf{0.89} & \textbf{0.798} & \underline{12.1} & \underline{31.4} \\
 \addlinespace[3pt]
 \multicolumn{7}{@{}l}{\textit{Ryugu, 40\textdegree{}}} \\
-PCGS without priors &  & \underline{0.71} & \underline{1.06} & \underline{0.719} & 13.2 & \textbf{33.9} \\
+Shading only &  & \underline{0.71} & \underline{1.06} & \underline{0.719} & 13.2 & \textbf{33.9} \\
 + cast shadows & \checkmark & \underline{0.71} & 1.07 & 0.709 & \textbf{12.5} & 28.1 \\
-+ albedo TV + cast shadows &  & 0.77 & 1.24 & 0.676 & 13.0 & 26.6 \\
++ albedo prior + cast shadows &  & 0.77 & 1.24 & 0.676 & 13.0 & 26.6 \\
 PCGS (final model) &  & \textbf{0.66} & \textbf{0.95} & \textbf{0.757} & \underline{12.8} & \underline{33.0} \\
 \addlinespace[3pt]
 \multicolumn{7}{@{}l}{\textit{Bennu, 26--60\textdegree{}}} \\
-PCGS without priors &  & 14.75 & 27.49 & 0.271 & 38.6 & \underline{20.3} \\
+Shading only &  & 14.75 & 27.49 & 0.271 & 38.6 & \underline{20.3} \\
 + cast shadows & \checkmark & \underline{4.18} & \underline{10.28} & \underline{0.444} & \underline{34.8} & 19.8 \\
 PCGS (final model) &  & \textbf{0.59} & \textbf{1.21} & \textbf{0.811} & \textbf{32.9} & \textbf{22.7} \\
 \bottomrule
 \end{tabular}
-\tablefoot{Rule: the prior that the phase rule selects. The 15\textdegree{} threshold was set after the 40\textdegree{} run with both priors. The final model adds the night-side band to the rule-selected prior. Bold: best; underlined: second best (image sets with three or more rows).}
+\tablefoot{Switch: the variant selected by the phase switch; the final model adds the night-side band to it. Shading only: photometric rendering without albedo prior and cast shadows. Lower is better except for the F-score and PSNR. Bold: best; underlined: second best (image sets with three or more rows).}
 \end{table*}

@@ -69,7 +69,7 @@ def compose(pdir, metrics, out):
     rf.style()
     INK = rf.INK
     global PRIOR
-    PRIOR = {"tv": ("Albedo TV", rf.PRIOR["tv"], rf.PRIOR_TINT["tv"]),
+    PRIOR = {"tv": ("Albedo prior", rf.PRIOR["tv"], rf.PRIOR_TINT["tv"]),
              "shadow": ("Cast shadows", rf.PRIOR["sh"], rf.PRIOR_TINT["sh"])}
     V10 = rf.COLOR["pcgs-v10"]
     mm = 1 / 25.4
@@ -99,7 +99,7 @@ def compose(pdir, metrics, out):
         for s in sorted(set(A.get(body, {}).get("pcgs-v10", {})) & set(A.get(body, {}).get("pcgs-v18", {}))):
             a, b = A[body]["pcgs-v10"][s], A[body]["pcgs-v18"][s]
             if "sfm_t20" in a and "sfm_t20" in b:
-                rows.append((f"{name} {ph}°" + (f", split {s}" if body in ("itokawa", "ryugu") else ""), a, b,
+                rows.append((f"{name} {ph}°" + (f", split {int(s) + 1}" if body in ("itokawa", "ryugu") else ""), a, b,
                              "tv" if ph < 15 else "shadow"))
 
     W = rf.WMM * mm
@@ -123,7 +123,7 @@ def compose(pdir, metrics, out):
     # a: one held-out image per campaign, the prior used at that phase underneath
     y = H - head
     fig.text(0, (H - head / 2) / H, "a", fontsize=8, fontweight="bold", va="center", color=INK)
-    fig.text(3.4 * mm / W, (H - head / 2) / H, "Campaigns by phase angle", fontsize=6.5, va="center", color=INK)
+    fig.text(3.4 * mm / W, (H - head / 2) / H, "Test images by phase angle", fontsize=6.5, va="center", color=INK)
     for k, (body, name, ph) in enumerate(CAMPAIGNS):
         ax = ax_at(k * (tw + g), y, tw, tw)
         ax.imshow(np.load(f"{pdir}/{body}_thumb.npy"), cmap="gray", vmin=0, vmax=255, interpolation="lanczos")
@@ -142,7 +142,7 @@ def compose(pdir, metrics, out):
     lab_w = 19.5 * mm
     pw = (W - xb - lab_w - 2 * 2.4 * mm) / 3
     fig.text(xb / W, (H - head / 2) / H, "b", fontsize=8, fontweight="bold", va="center", color=INK)
-    fig.text((xb + 3.4 * mm) / W, (H - head / 2) / H, "Development runs, no night-side band: no prior → rule-selected prior",
+    fig.text((xb + 3.4 * mm) / W, (H - head / 2) / H, "Without night-side band: shading only → with phase switch",
              fontsize=6.5, va="center", color=INK)
     yt = y - 4.4 * mm
     for j, (k, lab, higher) in enumerate(keys):
@@ -164,8 +164,8 @@ def compose(pdir, metrics, out):
             ax.spines[sp].set_visible(False)
         ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(3))
         ax.set_xlabel(f"{lab} {'↑' if higher else '↓'}", fontsize=6.0, labelpad=1.2, color=INK)
-    hl = [Line2D([], [], ls="", marker="o", ms=3.0, mfc="white", mec=V10, mew=0.8, label="no prior"),
-          Line2D([], [], ls="", marker="o", ms=3.3, mfc=rf.COLOR["pcgs-v18n"], mec="white", mew=0.3, label="with prior"),
+    hl = [Line2D([], [], ls="", marker="o", ms=3.0, mfc="white", mec=V10, mew=0.8, label="shading only"),
+          Line2D([], [], ls="", marker="o", ms=3.3, mfc=rf.COLOR["pcgs-v18n"], mec="white", mew=0.3, label="phase switch"),
           Line2D([], [], color=rf.COLOR["pcgs-v18n"], lw=1.0, label="better"),
           Line2D([], [], color="#9b9b9b", lw=1.0, label="worse")]
     fig.legend(handles=hl, loc="upper center", bbox_to_anchor=((xb + lab_w + (W - xb - lab_w) / 2) / W,
@@ -182,7 +182,7 @@ def compose(pdir, metrics, out):
         lab, col, _ = PRIOR[prior]
         fig.text((x + wm + g / 2) / W, (y - head / 2) / H, f"{name}, {lab[0].lower() + lab[1:]}", ha="center", va="center",
                  fontsize=6.5, color=INK, fontweight="bold")
-        for i, (t, tl) in enumerate((("pcgs-v10", "No prior"), ("pcgs-v18", "With prior"))):
+        for i, (t, tl) in enumerate((("pcgs-v10", "Shading only"), ("pcgs-v18", "Phase switch"))):
             ax = ax_at(x, y - head, wm, hm)
             ax.imshow(imgs[t], interpolation="lanczos", aspect="auto")
             st = meta[body]["stats"][t]

@@ -1,6 +1,6 @@
 \begin{table*}[t]
 \centering
-\caption{Shape and image accuracy on Itokawa and Ryugu. Mean $\pm$ standard deviation over three splits (50 training and 10 held-out images each).}
+\caption{Shape and image accuracy on Itokawa and Ryugu. Mean $\pm$ standard deviation over three splits (50 training and 10 test images each).}
 \label{tab:main}
 \footnotesize
 \setlength{\tabcolsep}{2.4pt}
@@ -8,7 +8,7 @@
 \toprule
  & \multicolumn{10}{c}{Shape against the reference model} & \multicolumn{2}{c}{Images} \\
 \cmidrule(lr){2-11}\cmidrule(lr){12-13}
-Method & \multicolumn{2}{c}{Mean (m) $\downarrow$} & \multicolumn{2}{c}{RMSE (m) $\downarrow$} & \multicolumn{2}{c}{Chamfer (m) $\downarrow$} & \multicolumn{2}{c}{F@1 m $\uparrow$} & \multicolumn{2}{c}{Normal (\textdegree{}) $\downarrow$} & \multicolumn{2}{c}{PSNR (dB) $\uparrow$} \\
+Method & \multicolumn{2}{c}{Mean (m)} & \multicolumn{2}{c}{RMSE (m)} & \multicolumn{2}{c}{Chamfer (m)} & \multicolumn{2}{c}{F@1 m} & \multicolumn{2}{c}{Normal (\textdegree{})} & \multicolumn{2}{c}{PSNR (dB)} \\
 \midrule
 \multicolumn{13}{@{}l}{\textit{Itokawa (AMICA, phase 10\textdegree{})}} \\
 2DGS & 6.55 & 3.41 & 17.96 & 11.62 & 4.63 & 1.92 & 0.546 & 0.035 & 24.1 & 2.4 & 33.6 & 1.0 \\
@@ -27,5 +27,5 @@ Asteroid-GS$^{\dagger}$ & 1.29 & 0.01 & 1.98 & 0.02 & 1.52 & 0.02 & 0.530 & 0.00
 \textbf{PCGS (this work)} & \textbf{0.62} & 0.00 & \textbf{0.89} & 0.01 & \textbf{0.73} & 0.00 & \textbf{0.798} & 0.000 & 12.1 & 0.0 & 31.3 & 0.1 \\
 \bottomrule
 \end{tabular}
-\tablefoot{Distances in metres. Mean, RMSE: vertices of the reconstruction to the reference surface; Chamfer: mean of the two directed mean distances; F@1 m: F-score at 1 m; Normal: mean angle between corresponding normals; PSNR: held-out images after one gain and offset per image. Bold: best; underlined: second best. $^{\dagger}$Asteroid-GS with the scene extent of its public code (the other rows use the object extent).}
+\tablefoot{Distances in metres. Mean, RMSE: unsigned distance from the vertices of the reconstruction to the reference surface; Chamfer: mean of the two directed mean distances; F@1 m: F-score at 1 m; Normal: mean angle between corresponding normals; PSNR: test images after one gain and offset per image. Lower is better except for the F-score and PSNR. Bold: best mean; underlined: second best. $^{\dagger}$Asteroid-GS with the scene extent that its released code derives from the camera positions; the other rows use the object extent.}
 \end{table*}

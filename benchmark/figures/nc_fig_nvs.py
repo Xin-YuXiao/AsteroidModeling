@@ -82,7 +82,7 @@ def main():
         ax.set_axis_off()
         return ax
 
-    cols = [("gt", "Held-out image")] + METHODS
+    cols = [("gt", "Test image")] + METHODS
     imgs = {"gt": gt, **rend}
     for j, (k, t) in enumerate(cols):
         fig.text((lab_w + j * (pw + g) + pw / 2) / W, (H - head / 2) / H, t, ha="center", va="center", fontsize=6.5,
