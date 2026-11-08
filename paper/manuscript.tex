@@ -57,7 +57,7 @@ terminator is excluded from the silhouette loss, cast shadows or an albedo prior
 angle, and watertight meshes are fused from depth maps that agree across views. We applied \pcgs\ to five image sets
 of Itokawa, Ryugu, and Bennu at phase angles of 7--60$^\circ$ and compared it with four Gaussian splatting methods.}
 {The mean distance to the mission shape models is 0.59~m for Itokawa and 0.62~m for Ryugu, 37\% and 15\% lower than
-that of the most accurate competing method. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, against more than 3.7~m for the other methods, mainly owing to the night-side band. Replacing the shading with view-dependent colour increases the mean distance by 30\% on Itokawa and 6\% on Ryugu. Volumes agree with the reference models to within 0.3\% at the reference scale and 3.4\% at the trajectory scale.}
+that of the most accurate competing method. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, against more than 3.7~m for the other methods, mainly owing to the night-side band and the cast shadows. Replacing the shading with view-dependent colour increases the mean distance by 30\% on Itokawa and 6\% on Ryugu. Volumes agree with the reference models to within 0.3\% at the reference scale and 3.4\% at the trajectory scale.}
 {Photometric rendering, combined with a night-side band and consistency-filtered depth fusion, yields watertight
 global shape models with sub-metre mean distances from about 50 images and 30~min of training on a single GPU.}
 
@@ -616,8 +616,9 @@ the training images resolve it at up to 2.6~m per pixel. The global maps show th
 5.2~m, whereas the errors of \pcgs, with a mean of 0.69~m, are concentrated in a narrow band along one meridian.
 
 Most of the difference from the baselines results from the treatment of the night side. Without the night-side band,
-the mean distance of \pcgs\ on the first split is 4.18~m, larger than that of PGSR and Asteroid-GS$^\dagger$ on the same
-split, 4.06 and 2.85~m (Table~\ref{tab:phase}). Figure~\ref{fig:night} illustrates the mechanism. In a test image at a
+the mean distance of \pcgs\ on the first split is 4.18~m, larger than that of PGSR and Asteroid-GS$^\dagger$ on the
+same split, 4.06 and 2.85~m (Table~\ref{tab:phase}). Cast shadows are also needed: with the band but without them,
+the mean distance is 2.44~m (Sect.~\ref{sec:rule}). Figure~\ref{fig:night} illustrates the mechanism. In a test image at a
 phase angle of 45$^\circ$, the outline of the reference model extends well beyond the foreground mask into the
 night-side band (Fig.~\ref{fig:night}a). Without the band, the silhouette loss treats this region as empty space: the
 surface is removed where the body is dark in most training views and bulges outwards elsewhere, and 16\% of the vertices
@@ -723,8 +724,7 @@ comparable accuracy rather than a ranking.
 
 Table~\ref{tab:ablation} quantifies the contribution of each component of \pcgs\ with models in which one
 component is removed or replaced while all others are kept, trained on the first split of each image set and evaluated
-as in Table~\ref{tab:main}. Removing the photometric rendering, the multi-view consistency, or the silhouette loss increases
-the mean distance and the RMSE on both Itokawa and Ryugu, whereas the night-side band affects the mean distance only at high phase angle.
+as in Table~\ref{tab:main}. Removing the photometric rendering, the multi-view consistency, or the silhouette loss increases the mean distance and the RMSE on Itokawa and on Ryugu at 19$^\circ$ and 40$^\circ$, whereas the night-side band affects the mean distance only at high phase angle.
 
 \input{tables/ablation}
 
@@ -732,7 +732,9 @@ the mean distance and the RMSE on both Itokawa and Ryugu, whereas the night-side
 \label{sec:abl_photo}
 
 When the albedo is compared with the image directly, without the photometric function, the mean distance increases
-from 0.60 to 0.89~m on Itokawa and from 0.62 to 0.70~m on Ryugu at 19$^\circ$. On Itokawa, the RMSE more than doubles,
+from 0.60 to 0.89~m on Itokawa and from 0.62 to 0.70~m on Ryugu at 19$^\circ$. At 40$^\circ$, the increase is larger,
+from 0.66 to 0.92~m, so on Ryugu the contribution of the shading grows with the phase angle, from 14\% at 19$^\circ$
+to 38\% at 40$^\circ$. On Itokawa, the RMSE more than doubles,
 from 1.07 to 2.46~m, and the normal error increases on both bodies. Because the phase switch acts on the shading, it is
 removed as well, so this comparison measures the photometric model together with the phase switch. The model without
 the phase switch separates the two. Compared with it, removing the shading on Itokawa increases the mean distance from
@@ -754,7 +756,9 @@ pipeline for the rest.
 
 Multi-view consistency is the most important single constraint. Without it, the mean distance increases from 0.60 to
 1.26~m on Itokawa and from 0.62 to 0.82~m on Ryugu, and the F-score at 1~m decreases from 0.849 to 0.627 and from 0.798
-to 0.694. Without the silhouette loss, the mean distance increases to 0.97~m on Itokawa and to 0.64~m on Ryugu.
+to 0.694. Without the silhouette loss, the mean distance increases to 0.97~m on Itokawa and to 0.64~m on Ryugu
+at 19$^\circ$. At 40$^\circ$, multi-view consistency matters as much (0.96~m without it), and the silhouette loss
+becomes indispensable: without it, part of the mesh lies far from the body, and the RMSE rises from 0.95 to 39.5~m.
 
 \subsubsection{Effects of the night-side band}
 
@@ -779,7 +783,8 @@ one or two splits. Using both the albedo prior and cast shadows is worse than us
 40$^\circ$, possibly because the albedo prior then suppresses the brightness contrast that the shadows explain. As no
 image set lies between 10.4$^\circ$ and 18.5$^\circ$, the data constrain the threshold only to this interval. In the leave-one-out ablation, which includes the night-side band, removing the phase switch increases
 the mean distance from 0.60 to 0.68~m on Itokawa and from 0.62 to 0.64~m on Ryugu at 19$^\circ$, and the RMSE on
-Itokawa from 1.07 to 2.47~m.
+Itokawa from 1.07 to 2.47~m. On Bennu, cast shadows are essential even with the band: without them, the mean distance increases from
+0.59 to 2.44~m and the RMSE from 1.21 to 7.63~m.
 
 \input{tables/priors}
 
@@ -893,8 +898,9 @@ than that of the most accurate of four Gaussian splatting methods on each body. 
 Bennu, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds 3.7~m. At the scale of the
 reference models, the volumes agree to within 0.3\%; at the trajectory scale, they agree to within 3.4\%.
 
-The ablation identifies the source of these gains. The night-side band is essential at high phase angle and accounts
-for most of the difference on Bennu, but it has little effect on the mean distance at low phase angle. Replacing the
+The ablation identifies the source of these gains. At high phase angle, the night-side band and the cast shadows are both essential: on
+Bennu, the mean distance increases to 4.18~m without the band and to 2.44~m without the shadows. At low phase angle,
+the band has little effect on the mean distance. Replacing the
 shading by the view-dependent colour of Gaussian splatting increases the mean distance by 30\% on Itokawa and by 6\% on
 Ryugu, although it improves the fit to the test images; the known illumination thus constrains the geometry in a way
 that a free appearance model does not. The phase switch improves the models of Itokawa, of Ryugu at 19$^\circ$, and of
