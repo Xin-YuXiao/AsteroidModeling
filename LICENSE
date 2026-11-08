@@ -19,10 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----------------------------------------------------------------------------------
-This license covers the PCGS code: pcgs/, extraction/, evaluation/, data/, configs/,
-scripts/, benchmark/, tests/ and docs/. The files derived from 2D Gaussian Splatting
-and 3D Gaussian Splatting (train.py, render.py, arguments/, gaussian_renderer/,
-scene/, utils/) and the submodules remain under the Gaussian-Splatting License
-(LICENSE.md, non-commercial use); see NOTICE.md.
