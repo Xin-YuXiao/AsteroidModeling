@@ -889,17 +889,22 @@ albedo that is shaded by a lunar-Lambert function under the Sun direction of eac
 silhouette loss from removing the unlit part of the body, and a phase switch adds cast shadows or an albedo prior.
 
 On Itokawa and Ryugu, the mean distance of \pcgs\ to the mission shape models is 0.59 and 0.62~m, 37\% and 15\% lower
-than that of the most accurate of four Gaussian splatting methods on each body. Against the laser-altimeter model of Bennu, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds
-3.7~m. Most of this difference arises from the treatment of the night side: the night-side band is essential at high phase angle and has little effect on the mean distance at low phase angle. Within \pcgs, replacing the shading by view-dependent colour increases the mean distance by 30\% on
-Itokawa and by 6\% on Ryugu, although it improves the fit to the test images. The phase switch improves the models of Itokawa, of
-Ryugu at 19$^\circ$, and of Bennu, but not those of Ryugu at 7$^\circ$ and 40$^\circ$. At the scale of the reference
-models, the volumes agree to within 0.3\%; at the trajectory scale, to within 3.4\%. The fitted lunar-Lambert parameter
-of Ryugu decreases with increasing phase angle, from 0.78 at 7$^\circ$ to 0.37 at 40$^\circ$. Because it trains in about 30~min on a single GPU, \pcgs\ could provide shape models within the first days of a
-rendezvous.
+than that of the most accurate of four Gaussian splatting methods on each body. Against the laser-altimeter model of
+Bennu, the mean distance is $0.62\pm0.06$~m, whereas that of the other methods exceeds 3.7~m. At the scale of the
+reference models, the volumes agree to within 0.3\%; at the trajectory scale, they agree to within 3.4\%.
 
-In future work, we plan to replace the phase switch by a photometric model fitted jointly across phase angles, to test
-the method on shorter image arcs and other bodies, and to apply it to the first images of upcoming missions such as Hera
-\citep{Michel2022}.
+The ablation identifies the source of these gains. The night-side band is essential at high phase angle and accounts
+for most of the difference on Bennu, but it has little effect on the mean distance at low phase angle. Replacing the
+shading by the view-dependent colour of Gaussian splatting increases the mean distance by 30\% on Itokawa and by 6\% on
+Ryugu, although it improves the fit to the test images; the known illumination thus constrains the geometry in a way
+that a free appearance model does not. The phase switch improves the models of Itokawa, of Ryugu at 19$^\circ$, and of
+Bennu, but not those of Ryugu at 7$^\circ$ and 40$^\circ$, and the fitted lunar-Lambert parameter of Ryugu decreases
+from 0.78 at 7$^\circ$ to 0.37 at 40$^\circ$.
+
+Because it trains in about 30~min on a single GPU, \pcgs\ could provide shape models within the first days of a
+rendezvous. In future work, we plan to replace the phase switch by a photometric model fitted jointly across phase
+angles, to test the method on shorter image arcs and other bodies, and to apply it to the first images of upcoming
+missions such as Hera \citep{Michel2022}.
 
 \begin{acknowledgements}
 We thank JAXA/ISAS and the Hayabusa and Hayabusa2 project teams, and NASA and the OSIRIS-REx team, for the images,
