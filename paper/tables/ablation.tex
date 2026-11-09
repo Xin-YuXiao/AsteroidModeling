@@ -1,6 +1,6 @@
 \begin{table*}[t]
 \centering
-\caption{Leave-one-out ablation. First split; one component removed or replaced at a time.}
+\caption{Leave-one-out ablation on the first split. One component is removed or replaced at a time.}
 \label{tab:ablation}
 \footnotesize
 \setlength{\tabcolsep}{4.0pt}
@@ -16,7 +16,7 @@ No phase switch & 0.68 & 2.47 & 0.841 & 14.4 & 38.8 \\
 No night-side band & 0.58 & 0.92 & 0.846 & 14.4 & 36.8 \\
 No silhouette loss & 0.97 & 2.29 & 0.762 & 16.5 & 32.5 \\
 No multi-view NCC & 1.26 & 3.07 & 0.627 & 20.4 & 37.5 \\
-No pixel correction & 0.63 & 1.27 & 0.849 & 15.8 & 37.1 \\
+No pixel-convention correction & 0.63 & 1.27 & 0.849 & 15.8 & 37.1 \\
 \addlinespace[3pt]
 \multicolumn{6}{@{}l}{\textit{Ryugu, 19\textdegree{}}} \\
 \textbf{PCGS (full model)} & 0.62 & 0.89 & 0.798 & 12.1 & 31.4 \\
@@ -26,7 +26,7 @@ No phase switch & 0.64 & 0.93 & 0.779 & 12.6 & 33.4 \\
 No night-side band & 0.62 & 0.90 & 0.791 & 11.9 & 30.0 \\
 No silhouette loss & 0.64 & 0.98 & 0.791 & 12.5 & 30.3 \\
 No multi-view NCC & 0.82 & 1.21 & 0.694 & 13.7 & 30.6 \\
-No pixel correction & 0.65 & 0.93 & 0.785 & 15.0 & 31.0 \\
+No pixel-convention correction & 0.65 & 0.93 & 0.785 & 15.0 & 31.0 \\
 \addlinespace[3pt]
 \multicolumn{6}{@{}l}{\textit{Ryugu, 40\textdegree{}}} \\
 \textbf{PCGS (full model)} & 0.66 & 0.95 & 0.757 & 12.8 & 33.0 \\
@@ -44,5 +44,5 @@ No phase switch & 2.44 & 7.63 & 0.606 & 36.6 & 22.8 \\
 No night-side band & 4.18 & 10.28 & 0.444 & 34.8 & 19.8 \\
 \bottomrule
 \end{tabular}
-\tablefoot{Unshaded albedo: the rendered albedo is compared with the image directly (no photometric function). View-dependent colour: the albedo is replaced by the third-degree spherical-harmonic colour of 2DGS. Both variants also lose the phase switch, which acts on the shading. Columns as in Table~\ref{tab:main}; lower is better except for the F-score and PSNR. Variants not run on an image set are omitted.}
+\tablefoot{Unshaded albedo: the rendered albedo is compared directly with the image (no photometric function). View-dependent colour: the albedo is replaced by the third-degree spherical-harmonic colour of 2DGS. Both variants also lack the phase switch, which acts through the shading. Columns as in Table~\ref{tab:main}; lower is better except for the F-score and PSNR. Variants not run on an image set are omitted.}
 \end{table*}

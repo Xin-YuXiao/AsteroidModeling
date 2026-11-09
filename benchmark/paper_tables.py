@@ -254,6 +254,21 @@ def to_tex_aa3(t):
     s = s.replace("PSNR raw: the renders as each method writes them.", "PSNR raw: without the per-image gain and offset.")
     s = s.replace("the renders as each method writes them", "the rendered images as written by each method")
     s = s.replace("render it at a canonical exposure", "are rendered at a canonical exposure")
+    s = s.replace("The other columns after one gain and offset per image, fitted over the body, for every method; "
+                  "methods with per-image appearance codes (Asteroid-GS, GOF) have none for a test image",
+                  "All other columns are computed after fitting one gain and offset per image over the body, for every "
+                  "method; methods with per-image appearance codes (Asteroid-GS, GOF) have no code for a test image")
+    s = s.replace("(for PCGS this already contains its offset to the SfM tie points)",
+                  "(for PCGS, this already includes the offset to the SfM tie points)")
+    s = s.replace("offset fitted to the tie points, no reference used.",
+                  "offset fitted to the tie points without using the reference.")
+    s = s.replace("ICP registration: the mesh after tie-point alignment with a similarity transform (scale, rotation, "
+                  "translation) fitted to the reference by ICP instead of the shared scene transform, which removes any "
+                  "global misregistration of that mesh.",
+                  "ICP registration: the mesh after tie-point alignment, registered to the reference with a similarity "
+                  "transform (scale, rotation, translation) fitted by ICP instead of the shared scene transform; this "
+                  "removes any global misregistration of that mesh.")
+    s = s.replace("F@d their harmonic mean at distance d.", "F@d: their harmonic mean at threshold d.")
     return s
 
 
@@ -280,7 +295,7 @@ def tables_v3():
               colgroups=[("Shape against the reference model", 5), ("Images", 1)],
               groups=[("Itokawa (AMICA, phase 10°)", main("itokawa")), ("Ryugu (ONC-T, phase 19°)", main("ryugu"))],
               notes=[SHORT, DAG3]),
-         dict(key="bennu", title="Shape and image accuracy on Bennu against the laser-altimeter model.",
+         dict(key="bennu", title="Shape and image accuracy on Bennu, evaluated against the laser-altimeter shape model.",
               lead="Mean ± standard deviation over three splits.", sd=True, size="footnotesize", sep=2.4, cols=six,
               colgroups=[("Shape against the OLA model", 5), ("Images", 1)],
               groups=[("", [row("2DGS", "bennu", "2dgs-dtu"), row("PGSR", "bennu", "pgsr"),
@@ -296,15 +311,16 @@ def tables_v3():
                      ab("No night-side band", b, "pcgs-v18"),
                      ab("No silhouette loss", b, PCGS3 + "-nomask"),
                      ab("No multi-view NCC", b, PCGS3 + "-nomv"),
-                     ab("No pixel correction", b, PCGS3 + "-nopix")]
-    T.append(dict(key="ablation", title="Leave-one-out ablation.", lead="First split; one component removed or replaced at a time.",
+                     ab("No pixel-convention correction", b, PCGS3 + "-nopix")]
+    T.append(dict(key="ablation", title="Leave-one-out ablation on the first split.",
+                  lead="One component is removed or replaced at a time.",
                   sd=False, size="footnotesize", sep=4.0, wide=True, ranks=False, drop_empty=True,
                   cols=[col("mean"), col("rmse"), col("f1"), col("normal"), col("psnr")],
                   groups=[("Itokawa, 10°", abl("itokawa")), ("Ryugu, 19°", abl("ryugu")), ("Ryugu, 40°", abl("ryugu_b2")),
                           ("Bennu, 26–60°", abl("bennu"))],
-                  notes=["Unshaded albedo: the rendered albedo is compared with the image directly (no photometric "
+                  notes=["Unshaded albedo: the rendered albedo is compared directly with the image (no photometric "
                          "function). View-dependent colour: the albedo is replaced by the third-degree spherical-harmonic "
-                         "colour of 2DGS. Both variants also lose the phase switch, which acts on the shading. Columns as "
+                         "colour of 2DGS. Both variants also lack the phase switch, which acts through the shading. Columns as "
                          "in Table~\\ref{tab:main}; lower is better except for the F-score and PSNR. Variants not run on an image set are omitted."]))
     ph = lambda l, t, o=False, tm=None: row(l, "itokawa", t, splits=s0, ours=o) | ({"tagmap": tm} if tm else {})  # noqa: E731
     T.append(dict(key="phase", title="Shape accuracy on the five image sets, ordered by phase angle.",
@@ -530,18 +546,20 @@ def main():
             t = dict(t, title="Effect of the albedo prior and cast shadows.",
                      lead="First split; models without the night-side band, and the final model.")
             notes = ["Switch: the variant selected by the phase switch; the final model adds the night-side band to "
-                     "it. Shading only: photometric rendering without albedo prior and cast shadows. Lower is better "
+                     "it. Shading only: photometric rendering without the albedo prior or cast shadows. Lower is better "
                      "except for the F-score and PSNR.",
                      "Bold: best; underlined: second best (image sets with three or more rows)."]
             groups = [(g, [dict(r, label={"PCGS without priors": "Shading only"}.get(r["label"], r["label"])
                                 .replace("albedo TV", "albedo prior")) for r in rows]) for g, rows in groups]
         if t["key"] == "shape_full":
-            t = dict(t, title="Complete shape metrics.", cols=[col({"prec": "precf", "rec": "recf"}.get(c["key"], c["key"]))
-                                                              for c in t["cols"]])
+            t = dict(t, title="Additional shape metrics on Itokawa and Ryugu.",
+                     lead="Mean ± standard deviation over three splits, evaluated as in Table~\\ref{tab:main}.",
+                     cols=[col({"prec": "precf", "rec": "recf"}.get(c["key"], c["key"])) for c in t["cols"]])
             notes = [n.replace("shares of reconstructed", "fractions of reconstructed") for n in notes] + [
                 "Lower is better except for accuracy, completeness, and F-scores."]
         if t["key"] == "images_full":
-            t = dict(t, title="Complete image metrics.", lead="Test images, mean ± s.d. over three splits.")
+            t = dict(t, title="Image metrics on the test images of Itokawa and Ryugu.",
+                     lead="Mean ± standard deviation over three splits.")
             notes = [n.replace("held-out", "test") for n in notes] + ["Higher is better except for LPIPS."]
         if t["key"] == "protocol":
             t = dict(t, title="Mean distance and F-score at 1 m under four post-processing and registration "

@@ -1,6 +1,6 @@
 \begin{table*}[t]
 \centering
-\caption{Complete image metrics. Test images, mean $\pm$ s.d. over three splits.}
+\caption{Image metrics on the test images of Itokawa and Ryugu. Mean $\pm$ standard deviation over three splits.}
 \label{tab:images_full}
 \footnotesize
 \setlength{\tabcolsep}{4.0pt}
@@ -26,5 +26,5 @@ Asteroid-GS$^{\dagger}$ & 13.5 & 0.6 & 22.7 & 0.0 & 0.868 & 0.004 & 0.282 & 0.00
 \textbf{PCGS (this work)} & 31.0 & 0.1 & 31.3 & 0.1 & \textbf{0.952} & 0.001 & \underline{0.225} & 0.002 \\
 \bottomrule
 \end{tabular}
-\tablefoot{PSNR raw: without the per-image gain and offset. The other columns after one gain and offset per image, fitted over the body, for every method; methods with per-image appearance codes (Asteroid-GS, GOF) have none for a test image and are rendered at a canonical exposure. $^{\dagger}$Asteroid-GS with the scene extent that its released code derives from the camera positions; the other rows use the object extent. $^{\S}$First split only. Bold: best; underlined: second best. Higher is better except for LPIPS.}
+\tablefoot{PSNR raw: without the per-image gain and offset. All other columns are computed after fitting one gain and offset per image over the body, for every method; methods with per-image appearance codes (Asteroid-GS, GOF) have no code for a test image and are rendered at a canonical exposure. $^{\dagger}$Asteroid-GS with the scene extent that its released code derives from the camera positions; the other rows use the object extent. $^{\S}$First split only. Bold: best; underlined: second best. Higher is better except for LPIPS.}
 \end{table*}
